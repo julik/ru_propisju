@@ -22,33 +22,33 @@ module RuPropisju
     variants[variant-1]
   end
   
-  def propisju_items(amount, gender=1, *forms)
-    propisju(gender) + " " + choose_plural(amount.to_i, *forms)
-  end
   
   # Выводит целое или дробное число как сумму в рублях прописью
   def rublej(amount)
     pts = []
     
-    pts << sum_string(amount.to_i, 1, "рубль", "рубля", "рублей") unless amount.to_i == 0
+    pts << propisju_shtuk(amount.to_i, 1, "рубль", "рубля", "рублей") unless amount.to_i == 0
+    
     if amount.kind_of?(Float)
       remainder = (amount.divmod(1)[1]*100).round
       if (remainder == 100)
-        pts = [sum_string(amount.to_i+1, 1, 'рубль', 'рубля', 'рублей')]
+        pts = [propisju_shtuk(amount.to_i+1, 1, 'рубль', 'рубля', 'рублей')]
       else
-        pts << sum_string(remainder.to_i, 2, 'копейка', 'копейки', 'копеек')
+        pts << propisju_shtuk(remainder.to_i, 2, 'копейка', 'копейки', 'копеек')
       end
     end
     
     pts.join(' ')
   end
   
-  # Самое мясо
+  # Выбирает корректный вариант числительного в зависимости от рода и числа и оформляет сумму прописью
+  #   propisju(234) => "двести сорок три"
+  #   propisju(221, 2) => "двести двадцать одна"
   def propisju(amount, gender = 1)
-    if amount === Integer || amount === Bignum
+    if amount.is_a?(Integer) || amount.is_a?(Bignum)
       propisju_int(amount, gender)
-    else # также сработает для Decimal
-      propisju_float(amount, gender)
+    else # также сработает для Decimal, дробные десятичные числительные в долях поэтому женского рода
+      propisju_float(amount)
     end
   end
   
@@ -56,13 +56,13 @@ module RuPropisju
   def griven(amount)
     pts = []
 
-    pts << sum_string(amount.to_i, 2, "гривна", "гривны", "гривен") unless amount.to_i == 0
+    pts << propisju_int(amount.to_i, 2, "гривна", "гривны", "гривен") unless amount.to_i == 0
     if amount.kind_of?(Float)
       remainder = (amount.divmod(1)[1]*100).round
       if (remainder == 100)
-        pts = [sum_string(amount.to_i+1, 2, 'гривна', 'гривны', 'гривен')]
+        pts = [propisju_int(amount.to_i + 1, 2, 'гривна', 'гривны', 'гривен')]
       else
-        pts << sum_string(remainder.to_i, 2, 'копейка', 'копейки', 'копеек')
+        pts << propisju_int(remainder.to_i, 2, 'копейка', 'копейки', 'копеек')
       end
     end
     
@@ -73,49 +73,28 @@ module RuPropisju
     pts = []
     amount_round = amount.to_i
     r, k = (amount_round / 100.0).floor, (amount_round - ((amount_round / 100.0).floor * 100)).to_i
-    pts << sum_string(r, 1, "рубль", "рубля", "рублей") unless r.zero?
-    pts << sum_string(k, 2, 'копейка', 'копейки', 'копеек') unless k.zero?
+    pts << propisju_int(r, 1, "рубль", "рубля", "рублей") unless r.zero?
+    pts << propisju_int(k, 2, 'копейка', 'копейки', 'копеек') unless k.zero?
     pts.join(' ')
   end
 
-  #  Выполняет преобразование числа из цифрого вида в символьное
-  #   amount - числительное
-  #   gender   = 1 - мужской, = 2 - женский, = 3 - средний
-  #   one_item - именительный падеж единственного числа (= 1)
-  #   two_items - родительный падеж единственного числа (= 2-4)
-  #   five_items - родительный падеж множественного числа ( = 5-10)
-  # 
-  # Примерно так:
-  #   propisju(42, 1, "сволочь", "сволочи", "сволочей") # => "сорок две сволочи"
-  def sum_string(amount, gender = 1, one_item = '', two_items = '', five_items = '')
-    into = ''
-    tmp_val = amount
+  # Выводит сумму данного существительного прописью и выбирает правильное число и падеж
+  #
+  #    RuPropisju.propisju_shtuk(25, 3, "колесо", "колеса", "колес") #=> "двадцать пять колес"
+  #
+  def propisju_shtuk(items, gender = 1, *forms)
+    r = if items == items.to_i
+      [propisju(items, gender), choose_plural(items, *forms)]
+    else
+      [propisju(items, gender), forms[1]]
+    end
     
-    return "ноль " + five_items if amount == 0
-    
-    # единицы
-    into, tmp_val = sum_string_fn(into, tmp_val, gender, one_item, two_items, five_items)
-
-    return into if tmp_val == 0
-
-    # тысячи
-    into, tmp_val = sum_string_fn(into, tmp_val, 2, "тысяча", "тысячи", "тысяч") 
-
-    return into if tmp_val == 0
-
-    # миллионы
-    into, tmp_val = sum_string_fn(into, tmp_val, 1, "миллион", "миллиона", "миллионов")
-
-    return into if tmp_val == 0
-
-    # миллиарды
-    into, tmp_val = sum_string_fn(into, tmp_val, 1, "миллиард", "миллиарда", "миллиардов")
-    return into
+    r.join(" ")
   end
   
   private
   
-  def self.sum_string_fn(into, tmp_val, gender, one_item='', two_items='', five_items='')
+  def compose_ordinal(into, tmp_val, gender, one_item='', two_items='', five_items='')
     rest, rest1, end_word, ones, tens, hundreds = [nil]*6
     #
     rest = tmp_val % 1000
@@ -128,6 +107,7 @@ module RuPropisju
     #
     # начинаем подсчет с Rest
     end_word = five_items
+    
     # сотни
     hundreds = case rest / 100
       when 0 then ""
@@ -208,55 +188,63 @@ module RuPropisju
     return [plural, tmp_val] 
   end
   
+  DECIMALS = %w( целая десятая сотая тысячная десятитысячная стотысячная
+      миллионная десятимиллионная стомиллионная миллиардная десятимиллиардная 
+      стомиллиардная триллионная
+  ).map{|e| [e, e.gsub(/ая$/, "ых"), e.gsub(/ая$/, "ых"), ] }.freeze
+  
+  
   # Выдает сумму прописью с учетом дробной доли. Дробная доля округляется до миллионной, или (если
   # дробная доля оканчивается на нули) до ближайшей доли ( 500 тысячных округляется до 5 десятых).
   # Дополнительный аргумент - род существительного (1 - мужской, 2- женский, 3-средний)
-  def propisju_float(num, gender = 2)
-    raise "Это не число!" if num.respond_to?(:nan) && nan.nan?
+  def propisju_float(num)
     
-    st = sum_string(num.to_i, gender, "целая", "целых", "целых")
+    # Укорачиваем до триллионной доли
+    formatted = ("%0.#{DECIMALS.length}f" % num).gsub(/0+$/, '')
+    wholes, decimals = formatted.split(/\./)
     
-    remainder = num.to_s.match(/\.(\d+)/)[1] || 0
+    return propisju_int(wholes.to_i) if decimals.to_i.zero?
     
-    signs = remainder.to_s.size- 1
+    whole_st = propisju_shtuk(wholes.to_i, 2, *DECIMALS[0])
     
-    it = [["десятая", "десятых"]]
-    it << ["сотая", "сотых"]
-    it << ["тысячная", "тысячных"]
-    it << ["десятитысячная", "десятитысячных"]
-    it << ["стотысячная", "стотысячных"]
-    it << ["миллионная", "милллионных"]
-    it << ["десятимиллионная", "десятимилллионных", "десятимиллионных"]
-    it << ["стомиллионная", "стомилллионных", "стомиллионных"]
-    it << ["миллиардная", "миллиардных", "миллиардных"]
-    it << ["десятимиллиардная", "десятимиллиардных", "десятимиллиардных"]
-    it << ["стомиллиардная", "стомиллиардных", "стомиллиардных"]
-    it << ["триллионная", "триллионных", "триллионных"]
-
-    while it[signs].nil?
-      remainder = (remainder/10).round
-      signs = remainder.to_s.size- 1
-    end
-
-    suf1, suf2, suf3 = it[signs][0], it[signs][1], it[signs][2]
-    
-    [st, sum_string(remainder.to_i, 2, suf1, suf2, suf2)].join(" ")
+    rem_st = propisju_shtuk(decimals.to_i, 2, *DECIMALS[decimals.length])
+    [whole_st, rem_st].compact.join(" ")
   end
   
-  def propisju_items(items, gender = 1, *forms)
-    if items == items.to_i
-      return sum_string(items, gender, *forms)
-    else
-      propisju(items, gender) + " " + forms[1]
-    end
-  end
-  
-  
-  # Выбирает корректный вариант числительного в зависимости от рода и числа и оформляет сумму прописью
-  #   234.propisju => "двести сорок три"
-  #   221.propisju(2) => "двести двадцать одна"
-  def propisju_int(amount, gender = 1)
-    sum_string(amount, gender, "")
+  # Выполняет преобразование числа из цифрого вида в символьное
+  #
+  #   amount - числительное
+  #   gender   = 1 - мужской, = 2 - женский, = 3 - средний
+  #   one_item - именительный падеж единственного числа (= 1)
+  #   two_items - родительный падеж единственного числа (= 2-4)
+  #   five_items - родительный падеж множественного числа ( = 5-10)
+  # 
+  # Примерно так:
+  #   propisju(42, 1, "сволочь", "сволочи", "сволочей") # => "сорок две сволочи"
+  def propisju_int(amount, gender = 1, one_item = '', two_items = '', five_items = '')
+    into = ''
+    tmp_val = amount
+    
+    return "ноль " + five_items if amount == 0
+    
+    # единицы
+    into, tmp_val = compose_ordinal(into, tmp_val, gender, one_item, two_items, five_items)
+
+    return into if tmp_val == 0
+
+    # тысячи
+    into, tmp_val = compose_ordinal(into, tmp_val, 2, "тысяча", "тысячи", "тысяч") 
+
+    return into if tmp_val == 0
+
+    # миллионы
+    into, tmp_val = compose_ordinal(into, tmp_val, 1, "миллион", "миллиона", "миллионов")
+
+    return into if tmp_val == 0
+
+    # миллиарды
+    into, tmp_val = compose_ordinal(into, tmp_val, 1, "миллиард", "миллиарда", "миллиардов")
+    return into
   end
   
   alias_method :rublja, :rublej
@@ -271,5 +259,5 @@ module RuPropisju
   
   public_instance_methods(true).map{|m| module_function(m) }
   
-  module_function :propisju_int, :propisju_float
+  module_function :propisju_int, :propisju_float, :compose_ordinal
 end
