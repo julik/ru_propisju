@@ -51,6 +51,7 @@ class TestRuPropisju < Test::Unit::TestCase
   
   def test_griven
     assert_equal "сто двадцать три гривны", RuPropisju.griven(123)
+    assert_equal "сто двадцать четыре гривны", RuPropisju.griven(124)
     assert_equal "триста сорок три гривны двадцать копеек", RuPropisju.griven(343.20)
     assert_equal "сорок две копейки", RuPropisju.griven(0.4187)
     assert_equal "триста тридцать две гривны", RuPropisju.griven(331.995)

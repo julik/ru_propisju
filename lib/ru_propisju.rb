@@ -40,7 +40,7 @@ module RuPropisju
       if (remainder == 100)
         pts = [propisju_shtuk(amount.to_i+1, 1, 'рубль', 'рубля', 'рублей')]
       else
-        pts << propisju_shtuk(remainder.to_i, 2, 'копейка', 'копейки', 'копеек')
+        pts << propisju_shtuk(remainder.to_i, 2, 'копейка', 'копейки', 'копеек') unless remainder.to_i.zero?
       end
     end
     
@@ -82,12 +82,7 @@ module RuPropisju
   #
   #  kopeek(343) #=> "три рубля сорок три копейки"
   def kopeek(amount)
-    pts = []
-    amount_round = amount.to_i
-    r, k = (amount_round / 100.0).floor, (amount_round - ((amount_round / 100.0).floor * 100)).to_i
-    pts << propisju_int(r, 1, "рубль", "рубля", "рублей") unless r.zero?
-    pts << propisju_int(k, 2, 'копейка', 'копейки', 'копеек') unless k.zero?
-    pts.join(' ')
+    rublej(amount / 100.0)
   end
 
   # Выводит сумму данного существительного прописью и выбирает правильное число и падеж
@@ -106,19 +101,19 @@ module RuPropisju
   
   private
   
-  def compose_ordinal(into, tmp_val, gender, one_item='', two_items='', five_items='')
-    rest, rest1, end_word, ones, tens, hundreds = [nil]*6
+  def compose_ordinal(into, remaining_amount, gender, one_item='', two_items='', five_items='')
+    rest, rest1, chosen_ordinal, ones, tens, hundreds = [nil]*6
     #
-    rest = tmp_val % 1000
-    tmp_val = tmp_val / 1000
+    rest = remaining_amount % 1000
+    remaining_amount = remaining_amount / 1000
     if rest == 0 
       # последние три знака нулевые 
       into = five_items + " " if into == ""
-      return [into, tmp_val]
+      return [into, remaining_amount]
     end
     #
     # начинаем подсчет с Rest
-    end_word = five_items
+    chosen_ordinal = five_items
     
     # сотни
     hundreds = case rest / 100
@@ -171,18 +166,20 @@ module RuPropisju
             when 2 then "одна "
             when 3 then "одно "
           end
-          end_word = one_item
+          chosen_ordinal = one_item
         when 2
           if gender == 2
             ones = "две "
           else
             ones = "два " 
           end       
-          end_word = two_items
+          chosen_ordinal = two_items
         when 3
-          ones = "три " if end_word = two_items # TODO - WTF?
+          ones = "три "
+          chosen_ordinal = two_items
         when 4
-          ones = "четыре " if end_word = two_items  # TODO - WTF?
+          ones = "четыре "
+          chosen_ordinal = two_items
         when 5
           ones = "пять "
         when 6
@@ -196,8 +193,8 @@ module RuPropisju
       end
     end
     
-    plural = [hundreds, tens, ones, end_word,  " ",  into].join.strip 
-    return [plural, tmp_val] 
+    plural = [hundreds, tens, ones, chosen_ordinal,  " ",  into].join.strip 
+    return [plural, remaining_amount] 
   end
   
   DECIMALS = %w( целая десятая сотая тысячная десятитысячная стотысячная
@@ -233,28 +230,26 @@ module RuPropisju
   # Примерно так:
   #   propisju(42, 1, "сволочь", "сволочи", "сволочей") # => "сорок две сволочи"
   def propisju_int(amount, gender = 1, one_item = '', two_items = '', five_items = '')
-    into = ''
-    tmp_val = amount
     
-    return "ноль " + five_items if amount == 0
+    return "ноль " + five_items if amount.zero?
     
     # единицы
-    into, tmp_val = compose_ordinal(into, tmp_val, gender, one_item, two_items, five_items)
-
-    return into if tmp_val == 0
-
+    into, remaining_amount = compose_ordinal('', amount, gender, one_item, two_items, five_items)
+    
+    return into if remaining_amount == 0
+    
     # тысячи
-    into, tmp_val = compose_ordinal(into, tmp_val, 2, "тысяча", "тысячи", "тысяч") 
-
-    return into if tmp_val == 0
-
+    into, remaining_amount = compose_ordinal(into, remaining_amount, 2, "тысяча", "тысячи", "тысяч") 
+    
+    return into if remaining_amount == 0
+    
     # миллионы
-    into, tmp_val = compose_ordinal(into, tmp_val, 1, "миллион", "миллиона", "миллионов")
-
-    return into if tmp_val == 0
-
+    into, remaining_amount = compose_ordinal(into, remaining_amount, 1, "миллион", "миллиона", "миллионов")
+    
+    return into if remaining_amount == 0
+    
     # миллиарды
-    into, tmp_val = compose_ordinal(into, tmp_val, 1, "миллиард", "миллиарда", "миллиардов")
+    into, remaining_amount = compose_ordinal(into, remaining_amount, 1, "миллиард", "миллиарда", "миллиардов")
     return into
   end
   

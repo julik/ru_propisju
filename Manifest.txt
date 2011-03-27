@@ -1,8 +1,6 @@
-.autotest
 History.txt
 Manifest.txt
-README.txt
+README.rdoc
 Rakefile
-bin/ru_propisju
 lib/ru_propisju.rb
 test/test_ru_propisju.rb
