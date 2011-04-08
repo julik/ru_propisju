@@ -6,7 +6,7 @@ $KCODE = 'u' if RUBY_VERSION < '1.9.0'
 #   RuPropisju.rublej(123) # "сто двадцать три рубля"
 module RuPropisju
   
-  VERSION = '1.0.0'
+  VERSION = '1.1.0'
   
   # Выбирает нужный падеж существительного в зависимости от числа
   #
@@ -29,7 +29,7 @@ module RuPropisju
   
   # Выводит целое или дробное число как сумму в рублях прописью
   #
-  #   rublej(345.2) #=> "триста сорок пять рублей двадцать копеек"
+  #   rublej(345.2) #=> "триста сорок пять рублей 20 копеек"
   def rublej(amount)
     pts = []
     
@@ -40,7 +40,10 @@ module RuPropisju
       if (remainder == 100)
         pts = [propisju_shtuk(amount.to_i+1, 1, 'рубль', 'рубля', 'рублей')]
       else
-        pts << propisju_shtuk(remainder.to_i, 2, 'копейка', 'копейки', 'копеек') unless remainder.to_i.zero?
+        kop = remainder.to_i
+        unless kop.zero?
+          pts << kop << choose_plural(kop, 'копейка', 'копейки', 'копеек')
+        end
       end
     end
     
@@ -80,7 +83,7 @@ module RuPropisju
   
   # Выводит сумму прописью в рублях по количеству копеек
   #
-  #  kopeek(343) #=> "три рубля сорок три копейки"
+  #  kopeek(343) #=> "три рубля 43 копейки"
   def kopeek(amount)
     rublej(amount / 100.0)
   end

@@ -42,11 +42,11 @@ class TestRuPropisju < Test::Unit::TestCase
   
   def test_rublej
     assert_equal "сто двадцать три рубля", RuPropisju.rublej(123)
-    assert_equal "триста сорок три рубля двадцать копеек", RuPropisju.rublej(343.20)
-    assert_equal "сорок две копейки", RuPropisju.rublej(0.4187)
+    assert_equal "триста сорок три рубля 20 копеек", RuPropisju.rublej(343.20)
+    assert_equal "42 копейки", RuPropisju.rublej(0.4187)
     assert_equal "триста тридцать два рубля", RuPropisju.rublej(331.995)
     assert_equal "один рубль", RuPropisju.rubl(1)
-    assert_equal "три рубля четырнадцать копеек", RuPropisju.rublja(3.14)
+    assert_equal "три рубля 14 копеек", RuPropisju.rublja(3.14)
   end
   
   def test_griven
@@ -61,9 +61,9 @@ class TestRuPropisju < Test::Unit::TestCase
   
   def test_kopeek
     assert_equal "сто двадцать три рубля", RuPropisju.kopeek(12300)
-    assert_equal "три рубля четырнадцать копеек", RuPropisju.kopeek(314)
-    assert_equal "тридцать две копейки", RuPropisju.kopeek(32)
-    assert_equal "двадцать одна копейка", RuPropisju.kopeika(21)
-    assert_equal "три копейки", RuPropisju.kopeiki(3)
+    assert_equal "три рубля 14 копеек", RuPropisju.kopeek(314)
+    assert_equal "32 копейки", RuPropisju.kopeek(32)
+    assert_equal "21 копейка", RuPropisju.kopeika(21)
+    assert_equal "3 копейки", RuPropisju.kopeiki(3)
   end
 end
