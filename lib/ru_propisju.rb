@@ -6,7 +6,7 @@ $KCODE = 'u' if RUBY_VERSION < '1.9.0'
 #   RuPropisju.rublej(123) # "сто двадцать три рубля"
 module RuPropisju
   
-  VERSION = '1.1.0'
+  VERSION = '1.1.1'
   
   # Выбирает нужный падеж существительного в зависимости от числа
   #
@@ -269,4 +269,81 @@ module RuPropisju
   public_instance_methods(true).map{|m| module_function(m) }
   
   module_function :propisju_int, :propisju_float, :compose_ordinal
+
+  # Реализует вывод прописью любого объекта, реализующего Float
+  module FloatFormatting
+    # Выдает сумму прописью с учетом дробной доли. Дробная доля округляется до миллионной, или (если
+    # дробная доля оканчивается на нули) до ближайшей доли ( 500 тысячных округляется до 5 десятых).
+    # Дополнительный аргумент - род существительного (1 - мужской, 2- женский, 3-средний)
+    def propisju(gender = 2)
+      RuPropisju.propisju(self, gender)
+    end
+
+    def propisju_items(gender=1, *forms)
+      RuPropisju.propisju_shtuk(self, gender, *forms)
+    end
+
+  end
+
+  # Реализует вывод прописью любого объекта, реализующего Numeric
+  module NumericFormatting
+    # Выбирает корректный вариант числительного в зависимости от рода и числа и оформляет сумму прописью
+    #   234.propisju => "двести тридцать четыре"
+    #   221.propisju(2) => "двести двадцать одна"
+    def propisju(gender = 1)
+      RuPropisju.propisju(self, gender)
+    end
+
+    def propisju_items(gender=1, *forms)
+      RuPropisju.propisju_shtuk(self, gender, *forms)
+    end
+
+    # Выбирает корректный вариант числительного в зависимости от рода и числа. Например:
+    # * 4.items("колесо", "колеса", "колес") => "колеса"
+    def items(one_item, two_items, five_items)
+      RuPropisju.choose_plural(self, one_item, two_items, five_items)
+    end
+
+    # Выводит сумму в рублях прописью. Например:
+    # * (15.4).rublej => "пятнадцать рублей 40 копеек"
+    # * 1.rubl        => "один рубль"
+    # * (3.14).rublja => "три рубля 14 копеек"
+    def rublej
+      RuPropisju.rublej(self)
+    end
+    alias :rubl   :rublej
+    alias :rublja :rublej
+
+    # Выводит сумму в гривнах прописью. Например:
+    # * (15.4).griven => "пятнадцать гривен сорок копеек"
+    # * 1.grivna      => "одна гривна"
+    # * (3.14).grivny => "три гривны четырнадцать копеек"
+    def griven
+      RuPropisju.griven(self)
+    end
+    alias :grivna :griven
+    alias :grivny :griven
+  end
+
+  # Реализует вывод прописью любого объекта, реализующего Fixnum
+  module FixnumFormatting
+    def kopeek
+      RuPropisju.kopeek(self)
+    end
+    alias :kopeika :kopeek
+    alias :kopeiki :kopeek
+  end
+
+end
+
+class Object::Numeric
+  include RuPropisju::NumericFormatting
+end
+
+class Object::Fixnum
+  include RuPropisju::FixnumFormatting
+end
+
+class Object::Float
+  include RuPropisju::FloatFormatting
 end

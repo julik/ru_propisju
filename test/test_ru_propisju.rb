@@ -66,4 +66,27 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "21 копейка", RuPropisju.kopeika(21)
     assert_equal "3 копейки", RuPropisju.kopeiki(3)
   end
+
+  def test_float
+    assert_equal "двенадцать целых три десятых", (12.3).propisju(1)
+    assert_equal "шесть целых пять десятых рубля", (6.5).propisju_items(1, "рубль", "рубля", "рублей")
+  end
+
+  def test_numeric
+    assert_equal "двести тридцать четыре", 234.propisju
+    assert_equal "шесть рублей", (6).propisju_items(1, "рубль", "рубля", "рублей")
+    assert_equal "колеса", 4.items("колесо", "колеса", "колес")
+    assert_equal "пятнадцать рублей 40 копеек", (15.4).rublej
+    assert_equal "один рубль", 1.rubl
+    assert_equal "три рубля 14 копеек", (3.14).rublja
+    assert_equal "пятнадцать гривен сорок копеек", (15.4).griven
+    assert_equal "одна гривна", 1.grivna
+    assert_equal "три гривны четырнадцать копеек", (3.14).grivny
+  end
+
+  def test_fixnum
+    assert_equal "1 копейка", 1.kopeika
+    assert_equal "1 копейка", 1.kopeek
+    assert_equal "1 копейка", 1.kopeiki
+  end
 end
