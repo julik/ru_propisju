@@ -5,7 +5,29 @@ require "test/unit"
 require "ru_propisju"
 
 class TestRuPropisju < Test::Unit::TestCase
-
+  
+  def test_amount_in_words
+    assert_raise(RuPropisju::UnknownCurrency) do
+      RuPropisju.amount_in_words(123, "neumelix programmista")
+    end
+    
+    assert_equal "сто двадцать три рубля", RuPropisju.amount_in_words(123, :rur)
+    assert_equal "сто двадцать три рубля", RuPropisju.amount_in_words(123, "RUR")
+    assert_equal "сто двадцать три рубля", RuPropisju.amount_in_words(123, "rur")
+    assert_equal "сто двадцать три гривны", RuPropisju.amount_in_words(123, "uah")
+    assert_equal "сто двадцать три евро", RuPropisju.amount_in_words(123, "eur")
+    assert_equal "сто двадцать три евро четырнадцать центов", RuPropisju.amount_in_words(123.14, "eur")
+    assert_equal "сто двадцать три доллара четырнадцать центов", RuPropisju.amount_in_words(123.14, "usd")
+  end
+  
+  def test_propisju_dollarov
+    assert_equal "сто двадцать один доллар пятьдесят один цент", RuPropisju.dollarov(121.51)
+  end
+  
+  def test_propisju_euro
+    assert_equal "сто двадцать один евро четыре цента", RuPropisju.evro(121.04)
+  end
+  
   def test_propisju_for_ints
     assert_equal "пятьсот двадцать три", RuPropisju.propisju(523)
     assert_equal "шесть тысяч семьсот двадцать семь", RuPropisju.propisju(6727)

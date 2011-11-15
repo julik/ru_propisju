@@ -7,7 +7,11 @@ $KCODE = 'u' if RUBY_VERSION < '1.9.0'
 module RuPropisju
 
   VERSION = '1.2.0'
-
+  
+  # Кидается при запросе неизвестной валюты
+  class UnknownCurrency < ArgumentError
+  end
+  
   # Выбирает нужный падеж существительного в зависимости от числа
   #
   #   choose_plural(3, "штука", "штуки", "штук") #=> "штуки"
@@ -25,25 +29,18 @@ module RuPropisju
     end
     variants[variant-1]
   end
-
-  # Выводит сумму прописью в зависимости от выбранной валюты
+  
+  # Выводит сумму прописью в зависимости от выбранной валюты.
+  # Поддерживаемые валюты: rur, usd, uah, eur
   #
-  #   amount_in_word(345.2, 'rur') #=> "триста сорок пять рублей 20 копеек"
-  def amount_in_word(amount, currency)
-    case currency
-      when 'rur'
-        rublej(amount)
-      when 'usd'
-        dollarov(amount)
-      when 'uah'
-        griven(amount)
-      when 'eur'
-        evro(amount)
-      else
-        raise ArgumentError, "Currency is not defined"
+  #   amount_in_words(345.2, 'rur') #=> "триста сорок пять рублей 20 копеек"
+  def amount_in_words(amount, currency)
+    unless CURRENCIES.has_key?(currency.to_s.downcase)
+      raise UnknownCurrency, "Unsupported currency #{currency}, the following are supported: #{CURRENCIES.keys.join(", ")}"
     end
+    method(CURRENCIES[currency.to_s.downcase]).call(amount)
   end
-
+  
   # Выводит целое или дробное число как сумму в рублях прописью
   #
   #   rublej(345.2) #=> "триста сорок пять рублей 20 копеек"
@@ -254,12 +251,19 @@ module RuPropisju
     plural = [hundreds, tens, ones, chosen_ordinal,  " ",  into].join.strip
     return [plural, remaining_amount]
   end
-
+  
   DECIMALS = %w( целая десятая сотая тысячная десятитысячная стотысячная
       миллионная десятимиллионная стомиллионная миллиардная десятимиллиардная
       стомиллиардная триллионная
   ).map{|e| [e, e.gsub(/ая$/, "ых"), e.gsub(/ая$/, "ых"), ] }.freeze
-
+  
+  CURRENCIES = {
+    "rur" => :rublej,
+    "usd" => :dollarov,
+    "uah" => :griven,
+    "eur" => :evro,
+  }
+  
   # Выдает сумму прописью с учетом дробной доли. Дробная доля округляется до миллионной, или (если
   # дробная доля оканчивается на нули) до ближайшей доли ( 500 тысячных округляется до 5 десятых).
   # Дополнительный аргумент - род существительного (1 - мужской, 2- женский, 3-средний)
