@@ -6,7 +6,7 @@ $KCODE = 'u' if RUBY_VERSION < '1.9.0'
 #   RuPropisju.rublej(123) # "сто двадцать три рубля"
 module RuPropisju
 
-  VERSION = '1.1.0'
+  VERSION = '1.1.1'
 
   # Выбирает нужный падеж существительного в зависимости от числа
   #
