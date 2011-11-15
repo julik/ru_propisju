@@ -26,6 +26,23 @@ module RuPropisju
     variants[variant-1]
   end
 
+  # Выводит сумму прописью в зависимости от выбранной валюты
+  #
+  #   amount_in_word(345.2, 'rur') #=> "триста сорок пять рублей 20 копеек"
+  def amount_in_word(amount, currency)
+    case currency
+      when 'rur'
+        rublej(amount)
+      when 'usd'
+        dollarov(amount)
+      when 'uah'
+        griven(amount)
+      when 'eur'
+        euro(amount)
+      else
+        raise ArgumentError, "Currnecy not defined"
+    end
+  end
 
   # Выводит целое или дробное число как сумму в рублях прописью
   #
@@ -92,6 +109,25 @@ module RuPropisju
       remainder = (amount.divmod(1)[1]*100).round
       if (remainder == 100)
         pts = [propisju_int(amount.to_i + 1, 1, 'доллар', 'доллара', 'долларов')]
+      else
+        pts << propisju_int(remainder.to_i, 1, 'цент', 'цента', 'центов')
+      end
+    end
+
+    pts.join(' ')
+  end
+
+  # Выводит целое или дробное число как сумму в евро прописью
+  #
+  #  evro(32) #=> "тридцать два евро"
+  def evro(amount)
+    pts = []
+
+    pts << propisju_int(amount.to_i, 2, "евро", "евро", "евро") unless amount.to_i == 0
+    if amount.kind_of?(Float)
+      remainder = (amount.divmod(1)[1]*100).round
+      if (remainder == 100)
+        pts = [propisju_int(amount.to_i + 1, 1, 'евро', 'евро', 'евро')]
       else
         pts << propisju_int(remainder.to_i, 1, 'цент', 'цента', 'центов')
       end
