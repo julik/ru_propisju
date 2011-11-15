@@ -284,6 +284,8 @@ module RuPropisju
   alias_method :grivna, :griven
   alias_method :grivny, :griven
 
+  alias_method :dollar, :dollarov
+  alias_method :dollary, :dollarov
 
   public_instance_methods(true).map{|m| module_function(m) }
 
