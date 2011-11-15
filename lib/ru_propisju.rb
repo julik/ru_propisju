@@ -6,7 +6,7 @@ $KCODE = 'u' if RUBY_VERSION < '1.9.0'
 #   RuPropisju.rublej(123) # "сто двадцать три рубля"
 module RuPropisju
 
-  VERSION = '1.1.1'
+  VERSION = '1.1.2'
 
   # Выбирает нужный падеж существительного в зависимости от числа
   #
@@ -38,7 +38,7 @@ module RuPropisju
       when 'uah'
         griven(amount)
       when 'eur'
-        euro(amount)
+        evro(amount)
       else
         raise ArgumentError, "Currnecy not defined"
     end
@@ -104,7 +104,7 @@ module RuPropisju
   def dollarov(amount)
     pts = []
 
-    pts << propisju_int(amount.to_i, 2, "доллар", "доллара", "долларов") unless amount.to_i == 0
+    pts << propisju_int(amount.to_i, 1, "доллар", "доллара", "долларов") unless amount.to_i == 0
     if amount.kind_of?(Float)
       remainder = (amount.divmod(1)[1]*100).round
       if (remainder == 100)
