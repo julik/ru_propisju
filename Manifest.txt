@@ -1,6 +1,0 @@
-History.txt
-Manifest.txt
-README.rdoc
-Rakefile
-lib/ru_propisju.rb
-test/test_ru_propisju.rb
