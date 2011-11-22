@@ -14,10 +14,6 @@ Jeweler::Tasks.new do |gem|
   gem.homepage = "http://github.com/julik/ru_propisju"
   gem.authors = ["Julik Tarkhanov"]
   gem.license = 'MIT'
-  
-  # Deps
-  gem.add_development_dependency "jeweler"
-  gem.add_development_dependency "rake"
 end
 Jeweler::RubygemsDotOrgTasks.new
 

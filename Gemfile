@@ -1,2 +1,5 @@
 source :rubygems
-gemspec
+group :development do
+  gem "jeweler"
+  gem "rake"
+end
