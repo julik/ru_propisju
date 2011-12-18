@@ -7,15 +7,140 @@ $KCODE = 'u' if RUBY_VERSION < '1.9.0'
 module RuPropisju
 
   VERSION = '1.2.0'
-  
+
+  CURRENCIES = {
+    # http://www.xe.com/symbols.php
+    # (лица, приближенные форексам и всяким там валютам и курсам)
+    # говорят, что код валюты российского рубля - rub
+    "rur" => :rublej,
+    "rub" => :rublej,
+    "usd" => :dollarov,
+    "uah" => :griven,
+    "eur" => :evro,
+  }
+  SUPPORTED_CURRENCIES = CURRENCIES.keys.join ','
+
+  TRANSLATIONS = {
+    :ru => {
+      0 => "",
+      '0' => "ноль",
+      :thousands => ["тысяча", "тысячи", "тысяч"],
+      :millions => ["миллион", "миллиона", "миллионов"],
+      :billions => ["миллиард", "миллиарда", "миллиардов"],
+      100 => "сто",
+      200 => "двести",
+      300 => "триста",
+      400 => "четыреста",
+      500 => "пятьсот",
+      600 => "шестьсот",
+      700 => "семьсот",
+      800 => "восемьсот",
+      900 => "девятьсот",
+
+      10 => "десять",
+      11 => "одиннадцать",
+      12 => "двенадцать",
+      13 => "тринадцать",
+      14 => "четырнадцать",
+      15 => "пятнадцать",
+      16 => "шестнадцать",
+      17 => "семнадцать",
+      18 => "восемнадцать",
+      19 => "девятнадцать",
+      20 => "двадцать",
+      30 => "тридцать",
+      40 => "сорок",
+      50 => "пятьдесят",
+      60 => "шестьдесят",
+      70 => "семьдесят",
+      80 => "восемьдесят",
+      90 => "девяносто",
+      # единицы, местами - c учетом рода
+      1 => {1 => "один", 2 => 'одна', 3 => 'одно'},
+      2 => {1 => "два", 2 => 'две', 3 => 'два'},
+      3 => "три",
+      4 => "четыре",
+      5 => "пять",
+      6 => "шесть",
+      7 => "семь",
+      8 => "восемь",
+      9 => "девять",
+      :rub_integral => ["рубль", "рубля", "рублей"],
+      :rub_fraction => ['копейка', 'копейки', 'копеек'],
+      :uah_integral => ["гривна", "гривны", "гривен"],
+      :uah_fraction => ['копейка', 'копейки', 'копеек'],
+      :eur_integral => ["евро", "евро", "евро"],
+      # по опыту моей прошлой работы в банке
+      # центами называют дробную часть доллара
+      # а дробную часть евро называют евроцентом
+      :eur_fraction => ["цент", "цента", "центов"],
+      :usd_integral => ["доллар", "доллара", "долларов"],
+      :usd_fraction => ['цент', 'цента', 'центов'],
+    },
+    :ua => {
+      0 => "",
+      '0' => "нуль",
+      :thousands => ["тисяча", "тисячі", "тисяч"],
+      :millions => ["мільйон", "мільйона", "мільйонів"],
+      :billions => ["мільярд", "мільярда", "мільярдів"],
+      100 => "сто",
+      200 => "двісті",
+      300 => "триста",
+      400 => "чотиреста",
+      500 => "п'ятьсот",
+      600 => "шістсот",
+      700 => "сімсот",
+      800 => "вісімсот",
+      900 => "дев'ятсот",
+
+      10 => "десять",
+      11 => "одинадцять",
+      12 => "дванадцять",
+      13 => "тринадцять",
+      14 => "чотирнадцять",
+      15 => "п'ятнадцять",
+      16 => "шістнадцять",
+      17 => "сімнадцять",
+      18 => "вісімнадцять",
+      19 => "дев'ятнадцять",
+      20 => "двадцять",
+      30 => "тридцять",
+      40 => "сорок",
+      50 => "п'ятьдесят",
+      60 => "шістдесят",
+      70 => "сімдесят",
+      80 => "вісімдесят",
+      90 => "дев'яносто",
+      # единицы, местами - c учетом рода
+      1 => {1 => "один", 2 => 'одна', 3 => 'одне'},
+      2 => {1 => "два", 2 => 'дві', 3 => 'два'},
+      3 => "три",
+      4 => "чотири",
+      5 => "п'ять",
+      6 => "шість",
+      7 => "сім",
+      8 => "вісім",
+      9 => "дев'ять",
+      :rub_integral => ["рубль", "рубля", "рублів"],
+      :rub_fraction => ['копійка', 'копійки', 'копійок'],
+      :uah_integral => ["гривня", "гривні", "гривень"],
+      :uah_fraction => ["копійка", "копійки", "копійок"],
+      :eur_integral => ["євро", "євро", "євро"],
+      :eur_fraction => ["євроцент", "євроцента", "євроцентів"],
+      :usd_integral => ["долар", "долара", "доларів"],
+      :usd_fraction => ['цент', 'цента', 'центів'],
+    }
+  }
+
+
   # Кидается при запросе неизвестной валюты
   class UnknownCurrency < ArgumentError
   end
-  
+
   # Выбирает нужный падеж существительного в зависимости от числа
   #
   #   choose_plural(3, "штука", "штуки", "штук") #=> "штуки"
-  def choose_plural(amount, *variants)
+  def choose_plural(amount, variants)
     mod_ten = amount % 10
     mod_hundred = amount % 100
     variant = if (mod_ten == 1 && mod_hundred != 11)
@@ -29,34 +154,39 @@ module RuPropisju
     end
     variants[variant-1]
   end
-  
+
   # Выводит сумму прописью в зависимости от выбранной валюты.
   # Поддерживаемые валюты: rur, usd, uah, eur
   #
   #   amount_in_words(345.2, 'rur') #=> "триста сорок пять рублей 20 копеек"
-  def amount_in_words(amount, currency)
-    unless CURRENCIES.has_key?(currency.to_s.downcase)
-      raise UnknownCurrency, "Unsupported currency #{currency}, the following are supported: #{CURRENCIES.keys.join(", ")}"
+  def amount_in_words amount, currency, locale=:ru
+    currency = currency.to_s.downcase
+    unless CURRENCIES.has_key? currency
+      raise UnknownCurrency, "Unsupported currency #{currency}, the following are supported: #{SUPPORTED_CURRENCIES}"
     end
-    method(CURRENCIES[currency.to_s.downcase]).call(amount)
+    method(CURRENCIES[currency]).call(amount, locale)
   end
-  
+
   # Выводит целое или дробное число как сумму в рублях прописью
   #
   #   rublej(345.2) #=> "триста сорок пять рублей 20 копеек"
-  def rublej(amount)
+  def rublej amount, locale=:ru
     pts = []
+    locale_root = TRANSLATIONS[locale.to_sym]
 
-    pts << propisju_shtuk(amount.to_i, 1, "рубль", "рубля", "рублей") unless amount.to_i == 0
+    integrals = locale_root[:rub_integral]
+    fractions = locale_root[:rub_fraction]
+
+    pts << propisju_shtuk(amount.to_i, 1, integrals, locale) unless amount.to_i == 0
 
     if amount.kind_of?(Float)
       remainder = (amount.divmod(1)[1]*100).round
-      if (remainder == 100)
-        pts = [propisju_shtuk(amount.to_i+1, 1, 'рубль', 'рубля', 'рублей')]
+      if remainder == 100
+        pts = [propisju_shtuk(amount.to_i+1, 1, integrals, locale)]
       else
         kop = remainder.to_i
         unless kop.zero?
-          pts << kop << choose_plural(kop, 'копейка', 'копейки', 'копеек')
+          pts << kop << choose_plural(kop, fractions)
         end
       end
     end
@@ -68,46 +198,53 @@ module RuPropisju
   #
   #   propisju(243) => "двести сорок три"
   #   propisju(221, 2) => "двести двадцать одна"
-  def propisju(amount, gender = 1)
+  def propisju(amount, gender, locale = :ru)
     if amount.is_a?(Integer) || amount.is_a?(Bignum)
-      propisju_int(amount, gender)
+      propisju_int(amount, gender, [], locale)
     else # также сработает для Decimal, дробные десятичные числительные в долях поэтому женского рода
-      propisju_float(amount)
+      propisju_float(amount, locale)
     end
   end
 
   # Выводит целое или дробное число как сумму в гривнах прописью
   #
   #  griven(32) #=> "тридцать две гривны"
-  def griven(amount)
-    pts = []
+  def griven(amount, locale='ru')
+    locale_root = TRANSLATIONS[locale.to_sym]
 
-    pts << propisju_int(amount.to_i, 2, "гривна", "гривны", "гривен") unless amount.to_i == 0
-    if amount.kind_of?(Float)
+    integrals = locale_root[:uah_integral]
+    fractions = locale_root[:uah_fraction]
+
+    pts = []
+    pts << propisju_int(amount.to_i, 2, integrals, locale) unless amount.to_i == 0
+    if amount.kind_of? Float
       remainder = (amount.divmod(1)[1]*100).round
-      if (remainder == 100)
-        pts = [propisju_int(amount.to_i + 1, 2, 'гривна', 'гривны', 'гривен')]
+      if remainder == 100
+        pts = [propisju_int(amount.to_i + 1, 2, integrals, locale)]
       else
-        pts << propisju_int(remainder.to_i, 2, 'копейка', 'копейки', 'копеек')
+        pts << propisju_int(remainder.to_i, 2, fractions, locale)
       end
     end
-
     pts.join(' ')
   end
 
   # Выводит целое или дробное число как сумму в долларах прописью
   #
   #  dollarov(32) #=> "тридцать два доллара"
-  def dollarov(amount)
+  def dollarov(amount, locale='ru')
     pts = []
+    locale_root = TRANSLATIONS[locale.to_sym]
 
-    pts << propisju_int(amount.to_i, 1, "доллар", "доллара", "долларов") unless amount.to_i == 0
+    integrals = locale_root[:usd_integral]
+    fractions = locale_root[:usd_fraction]
+
+    pts << propisju_int(amount.to_i, 1, integrals, locale) unless amount.to_i == 0
     if amount.kind_of?(Float)
       remainder = (amount.divmod(1)[1]*100).round
       if (remainder == 100)
-        pts = [propisju_int(amount.to_i + 1, 1, 'доллар', 'доллара', 'долларов')]
+        pts = [propisju_int(amount.to_i + 1, 1, integrals, locale)]
       else
-        pts << propisju_int(remainder.to_i, 1, 'цент', 'цента', 'центов')
+        pts << propisju_int(remainder.to_i, 1, fractions, locale)
       end
     end
 
@@ -117,16 +254,20 @@ module RuPropisju
   # Выводит целое или дробное число как сумму в евро прописью
   #
   #  evro(32) #=> "тридцать два евро"
-  def evro(amount)
+  def evro(amount, locale='ru')
     pts = []
+    locale = locale.to_sym
 
-    pts << propisju_int(amount.to_i, 1, "евро", "евро", "евро") unless amount.to_i == 0
+    integrals = TRANSLATIONS[locale][:eur_integral]
+    fractions = TRANSLATIONS[locale][:eur_fraction]
+
+    pts << propisju_int(amount.to_i, 1, integrals, locale) unless amount.to_i == 0
     if amount.kind_of?(Float)
       remainder = (amount.divmod(1)[1]*100).round
       if (remainder == 100)
-        pts = [propisju_int(amount.to_i + 1, 1, 'евро', 'евро', 'евро')]
+        pts = [propisju_int(amount.to_i + 1, 1, integrals, locale)]
       else
-        pts << propisju_int(remainder.to_i, 1, 'цент', 'цента', 'центов')
+        pts << propisju_int(remainder.to_i, 1, fractions, locale)
       end
     end
 
@@ -136,19 +277,19 @@ module RuPropisju
   # Выводит сумму прописью в рублях по количеству копеек
   #
   #  kopeek(343) #=> "три рубля 43 копейки"
-  def kopeek(amount)
-    rublej(amount / 100.0)
+  def kopeek(amount, locale=:ru)
+    rublej(amount / 100.0, locale)
   end
 
   # Выводит сумму данного существительного прописью и выбирает правильное число и падеж
   #
   #    RuPropisju.propisju_shtuk(21, 3, "колесо", "колеса", "колес") #=> "двадцать одно колесо"
   #    RuPropisju.propisju_shtuk(21, 1, "мужик", "мужика", "мужиков") #=> "двадцать один мужик"
-  def propisju_shtuk(items, gender = 1, *forms)
+  def propisju_shtuk(items, gender, forms, locale=:ru)
     r = if items == items.to_i
-      [propisju(items, gender), choose_plural(items, *forms)]
+      [propisju(items, gender, locale), choose_plural(items, forms)]
     else
-      [propisju(items, gender), forms[1]]
+      [propisju(items, gender, locale), forms[1]]
     end
 
     r.join(" ")
@@ -156,128 +297,127 @@ module RuPropisju
 
   private
 
-  def compose_ordinal(into, remaining_amount, gender, one_item='', two_items='', five_items='')
+  # ранее интерфейс был похож на интерфейс внешний (one_item, two_items, five_items),
+  # однако списковая форма строк выглядит предпочтительнее, поэтому интерфейс изменен.
+  # по хорошему надо менять также внешний интерфейс, но это может сломать совместимость
+  def compose_ordinal(into, remaining_amount, gender, item_forms=[], locale=:ru)
+    locale = locale.to_sym
+
     rest, rest1, chosen_ordinal, ones, tens, hundreds = [nil]*6
     #
     rest = remaining_amount % 1000
     remaining_amount = remaining_amount / 1000
-    if rest == 0
+    if rest.zero?
       # последние три знака нулевые
-      into = five_items + " " if into == ""
+      into = item_forms[2] if into.empty?
       return [into, remaining_amount]
     end
-    #
-    # начинаем подсчет с Rest
-    chosen_ordinal = five_items
 
+    locale_root = TRANSLATIONS[locale]
+    # начинаем подсчет с Rest
     # сотни
-    hundreds = case rest / 100
-      when 0 then ""
-      when 1 then "сто "
-      when 2 then "двести "
-      when 3 then "триста "
-      when 4 then "четыреста "
-      when 5 then "пятьсот "
-      when 6 then "шестьсот "
-      when 7 then "семьсот "
-      when 8 then "восемьсот "
-      when 9 then "девятьсот "
-    end
+    hundreds = locale_root[(rest / 100).to_i * 100]
 
     # десятки
     rest = rest % 100
     rest1 = rest / 10
+    # единички
     ones = ""
-    tens = case rest1
-      when 0 then ""
-      when 1 # особый случай
-        case rest
-          when 10 then "десять "
-          when 11 then "одиннадцать "
-          when 12 then "двенадцать "
-          when 13 then "тринадцать "
-          when 14 then "четырнадцать "
-          when 15 then "пятнадцать "
-          when 16 then "шестнадцать "
-          when 17 then "семнадцать "
-          when 18 then "восемнадцать "
-          when 19 then "девятнадцать "
-        end
-      when 2 then "двадцать "
-      when 3 then "тридцать "
-      when 4 then "сорок "
-      when 5 then "пятьдесят "
-      when 6 then "шестьдесят "
-      when 7 then "семьдесят "
-      when 8 then "восемьдесят "
-      when 9 then "девяносто "
-    end
-    #
-    if rest1 < 1 or rest1 > 1 # единицы
+    tens = locale_root[rest1 == 1 ? rest : rest1 * 10]
+    # индекс выбранной формы
+    chosen_ordinal = 2
+    if rest1 < 1 || rest1 > 1 # единицы
+      value = locale_root[rest % 10]
+      # если попался хэш, делаем выбор согласно рода
+      value = value[gender] if value.kind_of? Hash
+      ones = value
       case rest % 10
-        when 1
-          ones = case gender
-            when 1 then "один "
-            when 2 then "одна "
-            when 3 then "одно "
-          end
-          chosen_ordinal = one_item
-        when 2
-          if gender == 2
-            ones = "две "
-          else
-            ones = "два "
-          end
-          chosen_ordinal = two_items
-        when 3
-          ones = "три "
-          chosen_ordinal = two_items
-        when 4
-          ones = "четыре "
-          chosen_ordinal = two_items
-        when 5
-          ones = "пять "
-        when 6
-          ones = "шесть "
-        when 7
-          ones = "семь "
-        when 8
-          ones = "восемь "
-        when 9
-          ones = "девять "
-      end
+        when 1:
+          chosen_ordinal = 0 # индекс формы меняется
+        when 2..4:
+          chosen_ordinal = 1 # индекс формы меняется
+      end # case
     end
-
-    plural = [hundreds, tens, ones, chosen_ordinal,  " ",  into].join.strip
+    plural = [
+      hundreds,
+      tens,
+      ones,
+      item_forms[chosen_ordinal],
+      into
+    ].compact.reject(&:empty?).join(' ').strip
     return [plural, remaining_amount]
   end
-  
-  DECIMALS = %w( целая десятая сотая тысячная десятитысячная стотысячная
-      миллионная десятимиллионная стомиллионная миллиардная десятимиллиардная
-      стомиллиардная триллионная
-  ).map{|e| [e, e.gsub(/ая$/, "ых"), e.gsub(/ая$/, "ых"), ] }.freeze
-  
-  CURRENCIES = {
-    "rur" => :rublej,
-    "usd" => :dollarov,
-    "uah" => :griven,
-    "eur" => :evro,
+
+  DECIMALS = {
+    :ru =>{
+      :source_words => [
+        'целая',
+        'десятая',
+        'сотая',
+        'тысячная',
+        'десятитысячная',
+        'стотысячная',
+        'миллионная',
+        'десятимиллионная',
+        'стомиллионная',
+        'миллиардная',
+        'десятимиллиардная',
+        'стомиллиардная',
+        'триллионная'
+      ],
+      :prefix => ["ая", 'ых'],
+    },
+    :ua => {
+      :source_words => [
+        'ціла',
+        'десята',
+        'сота',
+        'тисячна',
+        'десятитисячна',
+        'стотисячна',
+        'мільйонна',
+        'десятимільйонна',
+        'стомільйонна',
+        'мільярдна',
+        'десятимільярдна',
+        'стомільярдна',
+        'трильонна'
+      ],
+      :prefix => ["а", 'их'],
+    },
   }
-  
+
+
+#   DECIMALS = %w( целая десятая сотая тысячная десятитысячная стотысячная
+#       миллионная десятимиллионная стомиллионная миллиардная десятимиллиардная
+#       стомиллиардная триллионная
+#   ).map{|e| [e, e.gsub(/ая$/, "ых"), e.gsub(/ая$/, "ых"), ] }.freeze
+#
+
   # Выдает сумму прописью с учетом дробной доли. Дробная доля округляется до миллионной, или (если
   # дробная доля оканчивается на нули) до ближайшей доли ( 500 тысячных округляется до 5 десятых).
   # Дополнительный аргумент - род существительного (1 - мужской, 2- женский, 3-средний)
-  def propisju_float(num)
+  def propisju_float(num, locale = :ru)
+    locale_root = DECIMALS[locale.to_sym]
+    source_expression = locale_root[:prefix][0]
+    target_prefix = locale_root[:prefix][1]
+    words = locale_root[:source_words].map do |e|
+      [
+        e,
+        e.gsub(/#{source_expression}$/, target_prefix),
+        e.gsub(/#{source_expression}$/, target_prefix),
+      ]
+    end.freeze
 
     # Укорачиваем до триллионной доли
-    formatted = ("%0.#{DECIMALS.length}f" % num).gsub(/0+$/, '')
+    formatted = ("%0.#{words.length}f" % num).gsub(/0+$/, '')
     wholes, decimals = formatted.split(/\./)
 
-    return propisju_int(wholes.to_i) if decimals.to_i.zero?
+    return propisju_int(wholes.to_i, 1, [], locale) if decimals.to_i.zero?
 
-    whole_st = propisju_shtuk(wholes.to_i, 2, *DECIMALS[0])
+    whole_st = propisju_shtuk(wholes.to_i, 2, words[0], locale)
 
-    rem_st = propisju_shtuk(decimals.to_i, 2, *DECIMALS[decimals.length])
+    rem_st = propisju_shtuk(decimals.to_i, 2, words[decimals.length], locale)
     [whole_st, rem_st].compact.join(" ")
   end
 
@@ -291,28 +431,28 @@ module RuPropisju
   #
   # Примерно так:
   #   propisju(42, 1, "сволочь", "сволочи", "сволочей") # => "сорок две сволочи"
-  def propisju_int(amount, gender = 1, one_item = '', two_items = '', five_items = '')
+  def propisju_int(amount, gender = 1, item_forms=[], locale=:ru)
 
-    return "ноль " + five_items if amount.zero?
+    locale_root = TRANSLATIONS[locale.to_sym]
+
+    return locale_root['0'] + ' ' + item_forms[2] if amount.zero?
 
     # единицы
-    into, remaining_amount = compose_ordinal('', amount, gender, one_item, two_items, five_items)
+    into, remaining_amount = compose_ordinal('', amount, gender, item_forms, locale)
 
-    return into if remaining_amount == 0
+    return into if remaining_amount.zero?
 
-    # тысячи
-    into, remaining_amount = compose_ordinal(into, remaining_amount, 2, "тысяча", "тысячи", "тысяч")
+    [:thousands, :millions, :billions].each do |type|
+      into, remaining_amount = compose_ordinal(
+        into,
+        remaining_amount,
+        (type == :thousands ? 2 : 1), # пол женский только для тысяч
+        locale_root[type],
+        locale
+      )
+      return into if remaining_amount.zero?
+    end
 
-    return into if remaining_amount == 0
-
-    # миллионы
-    into, remaining_amount = compose_ordinal(into, remaining_amount, 1, "миллион", "миллиона", "миллионов")
-
-    return into if remaining_amount == 0
-
-    # миллиарды
-    into, remaining_amount = compose_ordinal(into, remaining_amount, 1, "миллиард", "миллиарда", "миллиардов")
-    return into
   end
 
   alias_method :rublja, :rublej
