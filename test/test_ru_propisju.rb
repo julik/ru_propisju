@@ -11,7 +11,7 @@ class TestRuPropisju < Test::Unit::TestCase
       RuPropisju.amount_in_words(123, "neumelix programmista")
     end
 
-#     # russian locale
+    # russian locale
     assert_equal "сто двадцать три рубля", RuPropisju.amount_in_words(123, :rur)
     assert_equal "сто двадцать три рубля", RuPropisju.amount_in_words(123, :rub)
     assert_equal "сто двадцать три рубля", RuPropisju.amount_in_words(123, "RUR")

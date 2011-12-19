@@ -6,12 +6,12 @@ $KCODE = 'u' if RUBY_VERSION < '1.9.0'
 #   RuPropisju.rublej(123) # "сто двадцать три рубля"
 module RuPropisju
 
-  VERSION = '1.2.0'
-
+  VERSION = '2.0.0'
+  
+  # http://www.xe.com/symbols.php
+  # (лица, приближенные форексам и всяким там валютам и курсам)
+  # говорят, что код валюты российского рубля - rub
   CURRENCIES = {
-    # http://www.xe.com/symbols.php
-    # (лица, приближенные форексам и всяким там валютам и курсам)
-    # говорят, что код валюты российского рубля - rub
     "rur" => :rublej,
     "rub" => :rublej,
     "usd" => :dollarov,
@@ -19,7 +19,7 @@ module RuPropisju
     "eur" => :evro,
   }
   SUPPORTED_CURRENCIES = CURRENCIES.keys.join ','
-
+  
   TRANSLATIONS = {
     "ru" => {
       0 => "",
