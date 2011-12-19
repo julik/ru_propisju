@@ -159,7 +159,7 @@ module RuPropisju
   # Поддерживаемые валюты: rur, usd, uah, eur
   #
   #   amount_in_words(345.2, 'rur') #=> "триста сорок пять рублей 20 копеек"
-  def amount_in_words amount, currency, locale=:ru
+  def amount_in_words(amount, currency, locale = :ru)
     currency = currency.to_s.downcase
     unless CURRENCIES.has_key? currency
       raise UnknownCurrency, "Unsupported currency #{currency}, the following are supported: #{SUPPORTED_CURRENCIES}"
@@ -170,7 +170,7 @@ module RuPropisju
   # Выводит целое или дробное число как сумму в рублях прописью
   #
   #   rublej(345.2) #=> "триста сорок пять рублей 20 копеек"
-  def rublej amount, locale=:ru
+  def rublej(amount, locale = :ru)
     pts = []
     locale_root = TRANSLATIONS[locale.to_sym]
 
@@ -209,7 +209,7 @@ module RuPropisju
   # Выводит целое или дробное число как сумму в гривнах прописью
   #
   #  griven(32) #=> "тридцать две гривны"
-  def griven(amount, locale='ru')
+  def griven(amount, locale = 'ru')
     locale_root = TRANSLATIONS[locale.to_sym]
 
     integrals = locale_root[:uah_integral]
@@ -231,7 +231,7 @@ module RuPropisju
   # Выводит целое или дробное число как сумму в долларах прописью
   #
   #  dollarov(32) #=> "тридцать два доллара"
-  def dollarov(amount, locale='ru')
+  def dollarov(amount, locale = 'ru')
     pts = []
     locale_root = TRANSLATIONS[locale.to_sym]
 
@@ -254,7 +254,7 @@ module RuPropisju
   # Выводит целое или дробное число как сумму в евро прописью
   #
   #  evro(32) #=> "тридцать два евро"
-  def evro(amount, locale='ru')
+  def evro(amount, locale = 'ru')
     pts = []
     locale = locale.to_sym
 
@@ -277,7 +277,7 @@ module RuPropisju
   # Выводит сумму прописью в рублях по количеству копеек
   #
   #  kopeek(343) #=> "три рубля 43 копейки"
-  def kopeek(amount, locale=:ru)
+  def kopeek(amount, locale = :ru)
     rublej(amount / 100.0, locale)
   end
 
@@ -285,7 +285,7 @@ module RuPropisju
   #
   #    RuPropisju.propisju_shtuk(21, 3, "колесо", "колеса", "колес") #=> "двадцать одно колесо"
   #    RuPropisju.propisju_shtuk(21, 1, "мужик", "мужика", "мужиков") #=> "двадцать один мужик"
-  def propisju_shtuk(items, gender, forms, locale=:ru)
+  def propisju_shtuk(items, gender, forms, locale = :ru)
     r = if items == items.to_i
       [propisju(items, gender, locale), choose_plural(items, forms)]
     else
@@ -300,7 +300,7 @@ module RuPropisju
   # ранее интерфейс был похож на интерфейс внешний (one_item, two_items, five_items),
   # однако списковая форма строк выглядит предпочтительнее, поэтому интерфейс изменен.
   # по хорошему надо менять также внешний интерфейс, но это может сломать совместимость
-  def compose_ordinal(into, remaining_amount, gender, item_forms=[], locale=:ru)
+  def compose_ordinal(into, remaining_amount, gender, item_forms=[], locale = :ru)
     locale = locale.to_sym
 
     rest, rest1, chosen_ordinal, ones, tens, hundreds = [nil]*6
@@ -429,7 +429,7 @@ module RuPropisju
   #
   # Примерно так:
   #   propisju(42, 1, "сволочь", "сволочи", "сволочей") # => "сорок две сволочи"
-  def propisju_int(amount, gender = 1, item_forms=[], locale=:ru)
+  def propisju_int(amount, gender = 1, item_forms = [], locale = :ru)
 
     locale_root = TRANSLATIONS[locale.to_sym]
 
