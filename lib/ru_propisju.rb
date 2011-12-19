@@ -21,7 +21,7 @@ module RuPropisju
   SUPPORTED_CURRENCIES = CURRENCIES.keys.join ','
 
   TRANSLATIONS = {
-    :ru => {
+    "ru" => {
       0 => "",
       '0' => "ноль",
       :thousands => ["тысяча", "тысячи", "тысяч"],
@@ -77,7 +77,7 @@ module RuPropisju
       :usd_integral => ["доллар", "доллара", "долларов"],
       :usd_fraction => ['цент', 'цента', 'центов'],
     },
-    :ua => {
+    "ua" => {
       0 => "",
       '0' => "нуль",
       :thousands => ["тисяча", "тисячі", "тисяч"],
@@ -172,7 +172,7 @@ module RuPropisju
   #   rublej(345.2) #=> "триста сорок пять рублей 20 копеек"
   def rublej(amount, locale = :ru)
     pts = []
-    locale_root = TRANSLATIONS[locale.to_sym]
+    locale_root = TRANSLATIONS[locale.to_s]
 
     integrals = locale_root[:rub_integral]
     fractions = locale_root[:rub_fraction]
@@ -210,7 +210,7 @@ module RuPropisju
   #
   #  griven(32) #=> "тридцать две гривны"
   def griven(amount, locale = 'ru')
-    locale_root = TRANSLATIONS[locale.to_sym]
+    locale_root = TRANSLATIONS[locale.to_s]
 
     integrals = locale_root[:uah_integral]
     fractions = locale_root[:uah_fraction]
@@ -233,7 +233,7 @@ module RuPropisju
   #  dollarov(32) #=> "тридцать два доллара"
   def dollarov(amount, locale = 'ru')
     pts = []
-    locale_root = TRANSLATIONS[locale.to_sym]
+    locale_root = TRANSLATIONS[locale.to_s]
 
     integrals = locale_root[:usd_integral]
     fractions = locale_root[:usd_fraction]
@@ -258,8 +258,8 @@ module RuPropisju
     pts = []
     locale = locale.to_sym
 
-    integrals = TRANSLATIONS[locale][:eur_integral]
-    fractions = TRANSLATIONS[locale][:eur_fraction]
+    integrals = TRANSLATIONS[locale.to_s][:eur_integral]
+    fractions = TRANSLATIONS[locale.to_s][:eur_fraction]
 
     pts << propisju_int(amount.to_i, 1, integrals, locale) unless amount.to_i == 0
     if amount.kind_of?(Float)
@@ -313,7 +313,7 @@ module RuPropisju
       return [into, remaining_amount]
     end
 
-    locale_root = TRANSLATIONS[locale]
+    locale_root = TRANSLATIONS[locale.to_s]
     # начинаем подсчет с Rest
     # сотни
     hundreds = locale_root[(rest / 100).to_i * 100]
@@ -431,7 +431,7 @@ module RuPropisju
   #   propisju(42, 1, "сволочь", "сволочи", "сволочей") # => "сорок две сволочи"
   def propisju_int(amount, gender = 1, item_forms = [], locale = :ru)
 
-    locale_root = TRANSLATIONS[locale.to_sym]
+    locale_root = TRANSLATIONS[locale.to_s]
 
     return locale_root['0'] + ' ' + item_forms[2] if amount.zero?
 
