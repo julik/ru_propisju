@@ -332,11 +332,9 @@ module RuPropisju
       value = value[gender] if value.kind_of? Hash
       ones = value
       case rest % 10
-        when 1:
-          chosen_ordinal = 0 # индекс формы меняется
-        when 2..4:
-          chosen_ordinal = 1 # индекс формы меняется
-      end # case
+        when 1 then chosen_ordinal = 0 # индекс формы меняется
+        when 2..4 then chosen_ordinal = 1 # индекс формы меняется
+      end
     end
     plural = [
       hundreds,
