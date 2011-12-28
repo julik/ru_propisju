@@ -92,7 +92,11 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "триста сорок одна ціла двісті сорок п'ять тисячних", RuPropisju.propisju(341.245, 1, :ua)
     assert_equal "двісті три цілих сорок одна сота", RuPropisju.propisju(203.41, 1, :ua)
     assert_equal "чотиреста сорок дві цілих п'ять десятих", RuPropisju.propisju(442.50000, 1, :ua)
-
+    
+    # unknown locale
+    assert_raise(RuPropisju::UnknownLocale) do
+      assert_equal "чотиреста сорок дві цілих п'ять десятих", RuPropisju.propisju(442.50000, 1, :kg)
+    end
   end
   
   def test_choose_plural
