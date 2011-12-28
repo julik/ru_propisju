@@ -94,7 +94,7 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "чотиреста сорок дві цілих п'ять десятих", RuPropisju.propisju(442.50000, 1, :ua)
 
   end
-
+  
   def test_choose_plural
     assert_equal "чемодана", RuPropisju.choose_plural(523, ["чемодан", "чемодана", "чемоданов"])
     assert_equal "партий", RuPropisju.choose_plural(6727, ["партия", "партии", "партий"])
@@ -105,7 +105,6 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "колес", RuPropisju.choose_plural(260, "колесо", "колеса", "колес")
     
     # ua locale
-    
     assert_equal "валізи", RuPropisju.choose_plural(523, ["валіза", "валізи", "валіз"])
     assert_equal "партій", RuPropisju.choose_plural(6727, ["партія", "партії", "партій"])
     assert_equal "козлів", RuPropisju.choose_plural(45, ["козел", "козла", "козлів"])
