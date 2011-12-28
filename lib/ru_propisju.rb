@@ -258,10 +258,10 @@ module RuPropisju
   #  evro(32) #=> "тридцать два евро"
   def evro(amount, locale = 'ru')
     pts = []
-    locale = locale.to_sym
+    locale = locale.to_s
 
-    integrals = TRANSLATIONS[locale.to_s][:eur_integral]
-    fractions = TRANSLATIONS[locale.to_s][:eur_fraction]
+    integrals = TRANSLATIONS[locale][:eur_integral]
+    fractions = TRANSLATIONS[locale][:eur_fraction]
 
     pts << propisju_int(amount.to_i, 1, integrals, locale) unless amount.to_i == 0
     if amount.kind_of?(Float)
@@ -303,7 +303,7 @@ module RuPropisju
   # однако списковая форма строк выглядит предпочтительнее, поэтому интерфейс изменен.
   # по хорошему надо менять также внешний интерфейс, но это может сломать совместимость
   def compose_ordinal(into, remaining_amount, gender, item_forms=[], locale = :ru)
-    locale = locale.to_sym
+    locale = locale.to_s
 
     rest, rest1, chosen_ordinal, ones, tens, hundreds = [nil]*6
     #
@@ -349,7 +349,7 @@ module RuPropisju
   end
 
   DECIMALS = {
-    :ru =>{
+    'ru' =>{
       :source_words => [
         'целая',
         'десятая',
@@ -367,7 +367,7 @@ module RuPropisju
       ],
       :prefix => ["ая", 'ых'],
     },
-    :ua => {
+    'ua' => {
       :source_words => [
         'ціла',
         'десята',
@@ -397,8 +397,8 @@ module RuPropisju
   # Выдает сумму прописью с учетом дробной доли. Дробная доля округляется до миллионной, или (если
   # дробная доля оканчивается на нули) до ближайшей доли ( 500 тысячных округляется до 5 десятых).
   # Дополнительный аргумент - род существительного (1 - мужской, 2- женский, 3-средний)
-  def propisju_float(num, locale = :ru)
-    locale_root = DECIMALS[locale.to_sym]
+  def propisju_float(num, locale = 'ru')
+    locale_root = DECIMALS[locale.to_s]
     source_expression = locale_root[:prefix][0]
     target_prefix = locale_root[:prefix][1]
     words = locale_root[:source_words].map do |e|
