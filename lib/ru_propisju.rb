@@ -302,7 +302,7 @@ module RuPropisju
   # ранее интерфейс был похож на интерфейс внешний (one_item, two_items, five_items),
   # однако списковая форма строк выглядит предпочтительнее, поэтому интерфейс изменен.
   # по хорошему надо менять также внешний интерфейс, но это может сломать совместимость
-  def compose_ordinal(into, remaining_amount, gender, item_forms=[], locale = :ru)
+  def compose_ordinal(into, remaining_amount, gender, item_forms = [], locale = :ru)
     locale = locale.to_s
 
     rest, rest1, chosen_ordinal, ones, tens, hundreds = [nil]*6
