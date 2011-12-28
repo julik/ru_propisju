@@ -140,7 +140,9 @@ module RuPropisju
   # Выбирает нужный падеж существительного в зависимости от числа
   #
   #   choose_plural(3, "штука", "штуки", "штук") #=> "штуки"
-  def choose_plural(amount, variants)
+  def choose_plural(amount, *variants)
+    variants = variants.flatten
+    
     mod_ten = amount % 10
     mod_hundred = amount % 100
     variant = if (mod_ten == 1 && mod_hundred != 11)
