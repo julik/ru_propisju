@@ -20,7 +20,7 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "сто двадцать три евро", RuPropisju.amount_in_words(123, "eur")
     assert_equal "сто двадцать три евро четырнадцать центов", RuPropisju.amount_in_words(123.14, "eur")
     assert_equal "сто двадцать три доллара четырнадцать центов", RuPropisju.amount_in_words(123.14, "usd")
-
+    
     # ua locale
     assert_equal "сто двадцять три рубля", RuPropisju.amount_in_words(123, :rur, :ua)
     assert_equal "сто двадцять три рубля", RuPropisju.amount_in_words(123, :rub, :ua)
@@ -31,7 +31,11 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "сто двадцять три євро чотирнадцять євроцентів", RuPropisju.amount_in_words(123.14, "eur", :ua)
     assert_equal "сто двадцять три долара чотирнадцять центів", RuPropisju.amount_in_words(123.14, "usd", :ua)
   end
-
+  
+  def test_issue_3
+    assert_equal "два миллиона рублей", RuPropisju.amount_in_words(2000000, :rur)
+  end
+  
   def test_propisju_dollarov
     assert_equal "сто двадцать один доллар пятьдесят один цент", RuPropisju.dollarov(121.51)
     assert_equal "сто двадцять один долар п'ятьдесят один цент", RuPropisju.dollarov(121.51, :ua)
@@ -98,6 +102,7 @@ class TestRuPropisju < Test::Unit::TestCase
       assert_equal "чотиреста сорок дві цілих п'ять десятих", RuPropisju.propisju(442.50000, 1, :kg)
     end
   end
+  
   
   def test_choose_plural
     assert_equal "чемодана", RuPropisju.choose_plural(523, ["чемодан", "чемодана", "чемоданов"])
