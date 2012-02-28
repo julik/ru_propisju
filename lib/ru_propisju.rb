@@ -292,13 +292,13 @@ module RuPropisju
   #    RuPropisju.propisju_shtuk(21, 3, "колесо", "колеса", "колес") #=> "двадцать одно колесо"
   #    RuPropisju.propisju_shtuk(21, 1, "мужик", "мужика", "мужиков") #=> "двадцать один мужик"
   def propisju_shtuk(items, gender, forms, locale = :ru)
-    r = if items == items.to_i
+    elements = if (items == items.to_i)
       [propisju(items, gender, locale), choose_plural(items, forms)]
     else
       [propisju(items, gender, locale), forms[1]]
     end
-
-    r.join(" ")
+    
+    elements.join(" ")
   end
 
   private
@@ -308,14 +308,14 @@ module RuPropisju
   # по хорошему надо менять также внешний интерфейс, но это может сломать совместимость
   def compose_ordinal(into, remaining_amount, gender, item_forms = [], locale = :ru)
     locale = locale.to_s
-
+    
     rest, rest1, chosen_ordinal, ones, tens, hundreds = [nil]*6
-    #
+    
     rest = remaining_amount % 1000
     remaining_amount = remaining_amount / 1000
     if rest.zero?
       # последние три знака нулевые
-      into = item_forms[2] if into.empty?
+      into = item_forms[2].to_s if into.empty?
       return [into, remaining_amount]
     end
 
@@ -443,15 +443,15 @@ module RuPropisju
 
     # единицы
     into, remaining_amount = compose_ordinal('', amount, gender, item_forms, locale)
-
+    
     return into if remaining_amount.zero?
 
-    [:thousands, :millions, :billions].each do |type|
+    [:thousands, :millions, :billions].each do |elem|
       into, remaining_amount = compose_ordinal(
         into,
         remaining_amount,
-        (type == :thousands ? 2 : 1), # пол женский только для тысяч
-        locale_root[type],
+        gender = (elem == :thousands ? 2 : 1), # пол женский только для тысяч
+        locale_root[elem],
         locale
       )
       return into if remaining_amount.zero?
