@@ -33,7 +33,9 @@ class TestRuPropisju < Test::Unit::TestCase
   end
   
   def test_issue_3
-    assert_equal "два миллиона рублей", RuPropisju.amount_in_words(2000000, :rur)
+    assert_equal "два миллиона евро", RuPropisju.evro(2000000)
+    assert_equal "два миллиона рублей", RuPropisju.rublej(2000000)
+    assert_equal "два миллиона рублей", RuPropisju.amount_in_words(2000000, :rub)
   end
   
   def test_propisju_dollarov
