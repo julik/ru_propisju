@@ -1,3 +1,7 @@
+=== 2.1.1 / 2011-12-28
+
+* Починено https://github.com/julik/ru_propisju/issues/3
+
 === 2.1.0 / 2011-12-28
 
 * Восстановлен старый API для choose_plural

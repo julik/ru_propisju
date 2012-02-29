@@ -6,7 +6,7 @@ $KCODE = 'u' if RUBY_VERSION < '1.9.0'
 #   RuPropisju.rublej(123) # "сто двадцать три рубля"
 module RuPropisju
 
-  VERSION = '2.1.0'
+  VERSION = '2.1.1'
   
   # http://www.xe.com/symbols.php
   # (лица, приближенные форексам и всяким там валютам и курсам)
@@ -178,17 +178,16 @@ module RuPropisju
   #   rublej(345.2) #=> "триста сорок пять рублей 20 копеек"
   def rublej(amount, locale = :ru)
     parts = []
-    locale_root = pick_locale(TRANSLATIONS, locale)
+    locale_data = pick_locale(TRANSLATIONS, locale)
     
-    integrals = locale_root[:rub_integral]
-    fractions = locale_root[:rub_fraction]
-
-    parts << propisju_shtuk(amount.to_i, 1, integrals, locale) unless amount.to_i == 0
-
+    integrals = locale_data[:rub_integral]
+    fractions = locale_data[:rub_fraction]
+    
+    parts << propisju_int(amount.to_i, 1, integrals, locale) unless amount.to_i == 0
     if amount.kind_of?(Float)
       remainder = (amount.divmod(1)[1]*100).round
-      if remainder == 100
-        parts = [propisju_shtuk(amount.to_i+1, 1, integrals, locale)]
+      if (remainder == 100)
+        parts = [propisju_int(amount.to_i + 1, 1, integrals, locale)]
       else
         kop = remainder.to_i
         unless kop.zero?
@@ -196,7 +195,7 @@ module RuPropisju
         end
       end
     end
-
+    
     parts.join(' ')
   end
 
@@ -307,6 +306,7 @@ module RuPropisju
   # однако списковая форма строк выглядит предпочтительнее, поэтому интерфейс изменен.
   # по хорошему надо менять также внешний интерфейс, но это может сломать совместимость
   def compose_ordinal(into, remaining_amount, gender, item_forms = [], locale = :ru)
+    
     locale = locale.to_s
     
     rest, rest1, chosen_ordinal, ones, tens, hundreds = [nil]*6
@@ -315,7 +315,7 @@ module RuPropisju
     remaining_amount = remaining_amount / 1000
     if rest.zero?
       # последние три знака нулевые
-      into = item_forms[2].to_s if into.empty?
+      into = item_forms[2] if into.empty?
       return [into, remaining_amount]
     end
 
@@ -327,9 +327,11 @@ module RuPropisju
     # десятки
     rest = rest % 100
     rest1 = rest / 10
+
     # единички
     ones = ""
     tens = locale_root[rest1 == 1 ? rest : rest1 * 10]
+
     # индекс выбранной формы
     chosen_ordinal = 2
     if rest1 < 1 || rest1 > 1 # единицы
@@ -349,6 +351,7 @@ module RuPropisju
       item_forms[chosen_ordinal],
       into
     ].compact.reject(&:empty?).join(' ').strip
+    
     return [plural, remaining_amount]
   end
 
