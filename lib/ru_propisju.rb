@@ -432,7 +432,7 @@ module RuPropisju
   #   five_items - родительный падеж множественного числа ( = 5-10)
   #
   # Примерно так:
-  #   propisju(42, 1, "сволочь", "сволочи", "сволочей") # => "сорок две сволочи"
+  #   propisju(42, 1, ["сволочь", "сволочи", "сволочей"]) # => "сорок две сволочи"
   def propisju_int(amount, gender = 1, item_forms = [], locale = :ru)
     
     locale_root = pick_locale(TRANSLATIONS, locale)
