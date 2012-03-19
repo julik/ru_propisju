@@ -6,7 +6,7 @@ $KCODE = 'u' if RUBY_VERSION < '1.9.0'
 #   RuPropisju.rublej(123) # "сто двадцать три рубля"
 module RuPropisju
 
-  VERSION = '2.1.1'
+  VERSION = '2.1.2'
   
   # http://www.xe.com/symbols.php
   # (лица, приближенные форексам и всяким там валютам и курсам)
@@ -18,6 +18,7 @@ module RuPropisju
     "uah" => :griven,
     "eur" => :evro,
   }
+  
   SUPPORTED_CURRENCIES = CURRENCIES.keys.join ','
   
   TRANSLATIONS = {
@@ -301,25 +302,27 @@ module RuPropisju
   end
 
   private
-
-  # ранее интерфейс был похож на интерфейс внешний (one_item, two_items, five_items),
-  # однако списковая форма строк выглядит предпочтительнее, поэтому интерфейс изменен.
-  # по хорошему надо менять также внешний интерфейс, но это может сломать совместимость
-  def compose_ordinal(into, remaining_amount, gender, item_forms = [], locale = :ru)
+  
+  
+  # Cоставляет число прописью для чисел до тысячи
+  
+  def compose_ordinal(remaining_amount_or_nil, gender, item_forms = [], locale = :ru)
+    
+    remaining_amount = remaining_amount_or_nil.to_i
     
     locale = locale.to_s
     
     rest, rest1, chosen_ordinal, ones, tens, hundreds = [nil]*6
     
-    rest = remaining_amount % 1000
+    rest = remaining_amount  % 1000
     remaining_amount = remaining_amount / 1000
     if rest.zero?
       # последние три знака нулевые
-      into = item_forms[2] if into.empty?
-      return [into, remaining_amount]
+      return item_forms[2]
     end
 
     locale_root = pick_locale(TRANSLATIONS, locale)
+    
     # начинаем подсчет с Rest
     # сотни
     hundreds = locale_root[(rest / 100).to_i * 100]
@@ -349,10 +352,9 @@ module RuPropisju
       tens,
       ones,
       item_forms[chosen_ordinal],
-      into
     ].compact.reject(&:empty?).join(' ').strip
     
-    return [plural, remaining_amount]
+    return plural
   end
 
   DECIMALS = {
@@ -394,13 +396,6 @@ module RuPropisju
     },
   }
 
-
-#   DECIMALS = %w( целая десятая сотая тысячная десятитысячная стотысячная
-#       миллионная десятимиллионная стомиллионная миллиардная десятимиллиардная
-#       стомиллиардная триллионная
-#   ).map{|e| [e, e.gsub(/ая$/, "ых"), e.gsub(/ая$/, "ых"), ] }.freeze
-#
-
   # Выдает сумму прописью с учетом дробной доли. Дробная доля округляется до миллионной, или (если
   # дробная доля оканчивается на нули) до ближайшей доли ( 500 тысячных округляется до 5 десятых).
   # Дополнительный аргумент - род существительного (1 - мужской, 2- женский, 3-средний)
@@ -439,27 +434,35 @@ module RuPropisju
   # Примерно так:
   #   propisju(42, 1, "сволочь", "сволочи", "сволочей") # => "сорок две сволочи"
   def propisju_int(amount, gender = 1, item_forms = [], locale = :ru)
-
-    locale_root = pick_locale(TRANSLATIONS, locale)
-
-    return locale_root['0'] + ' ' + item_forms[2] if amount.zero?
-
-    # единицы
-    into, remaining_amount = compose_ordinal('', amount, gender, item_forms, locale)
     
-    return into if remaining_amount.zero?
-
-    [:thousands, :millions, :billions].each do |elem|
-      into, remaining_amount = compose_ordinal(
-        into,
-        remaining_amount,
-        gender = (elem == :thousands ? 2 : 1), # пол женский только для тысяч
-        locale_root[elem],
-        locale
-      )
-      return into if remaining_amount.zero?
+    locale_root = pick_locale(TRANSLATIONS, locale)
+    
+    fractions = {
+      :trillions => 1_000_000_000_000,
+      :billions => 1_000_000_000,
+      :millions => 1_000_000,
+      :thousands => 1_000,
+    }
+    
+    parts = fractions.map do | name, multiplier |
+      [name, fraction = (amount / multiplier) % 1000]
     end
-
+    
+    # Единицы обрабатываем отдельно
+    ones = amount % 1000
+    
+    # Составляем простые тысячные доли
+    parts_in_writing = parts.reject do | part |
+      part[1].zero?
+    end.map do | name, fraction |
+      thousandth_gender = (name == :thousands) ? 2 : 1
+      compose_ordinal(fraction, thousandth_gender, locale_root[name], locale)
+    end
+    
+    # И только единицы обрабатываем с переданными параметрами
+    parts_in_writing.push(compose_ordinal(ones, gender, item_forms, locale))
+    
+    parts_in_writing.compact.join(' ')
   end
   
   def pick_locale(from_hash, locale)
