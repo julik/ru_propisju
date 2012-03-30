@@ -47,7 +47,11 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "сто двадцать один евро четыре цента", RuPropisju.evro(121.04)
     assert_equal "сто двадцять один євро чотири євроцента", RuPropisju.evro(121.04, :ua)
   end
-
+  
+  def test_thousands_and_millions
+    assert_equal "два миллиона сто тысяч рублей", RuPropisju.amount_in_words(2100000, :rur)
+  end
+  
   def test_propisju_for_ints
     assert_equal "пятьсот двадцать три", RuPropisju.propisju(523, 1)
     assert_equal "шесть тысяч семьсот двадцать семь", RuPropisju.propisju(6727, 1)

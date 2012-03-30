@@ -6,7 +6,7 @@ $KCODE = 'u' if RUBY_VERSION < '1.9.0'
 #   RuPropisju.rublej(123) # "сто двадцать три рубля"
 module RuPropisju
 
-  VERSION = '2.1.2'
+  VERSION = '2.1.3'
   
   # http://www.xe.com/symbols.php
   # (лица, приближенные форексам и всяким там валютам и курсам)
@@ -437,12 +437,12 @@ module RuPropisju
     
     locale_root = pick_locale(TRANSLATIONS, locale)
     
-    fractions = {
-      :trillions => 1_000_000_000_000,
-      :billions => 1_000_000_000,
-      :millions => 1_000_000,
-      :thousands => 1_000,
-    }
+    fractions = [
+      [:trillions, 1_000_000_000_000],
+      [:billions, 1_000_000_000],
+      [:millions, 1_000_000],
+      [:thousands, 1_000],
+    ]
     
     parts = fractions.map do | name, multiplier |
       [name, fraction = (amount / multiplier) % 1000]
