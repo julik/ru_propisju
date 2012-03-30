@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "ru_propisju"
-  s.version = "2.1.2"
+  s.version = "2.1.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Julik Tarkhanov"]
-  s.date = "2012-03-19"
+  s.date = "2012-03-30"
   s.email = "me@julik.nl"
   s.extra_rdoc_files = [
     "README.rdoc"
@@ -26,8 +26,8 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/julik/ru_propisju"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.15"
-  s.summary = "C\u{443}\u{43c}\u{43c}\u{430} \u{43f}\u{440}\u{43e}\u{43f}\u{438}\u{441}\u{44c}\u{44e}"
+  s.rubygems_version = "1.8.16"
+  s.summary = "C\321\203\320\274\320\274\320\260 \320\277\321\200\320\276\320\277\320\270\321\201\321\214\321\216"
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
