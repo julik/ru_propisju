@@ -6,7 +6,7 @@ $KCODE = 'u' if RUBY_VERSION < '1.9.0'
 #   RuPropisju.rublej(123) # "сто двадцать три рубля"
 module RuPropisju
 
-  VERSION = '2.1.3'
+  VERSION = '2.1.4'
   
   # http://www.xe.com/symbols.php
   # (лица, приближенные форексам и всяким там валютам и курсам)
@@ -178,12 +178,13 @@ module RuPropisju
   #
   #   rublej(345.2) #=> "триста сорок пять рублей 20 копеек"
   def rublej(amount, locale = :ru)
-    parts = []
     locale_data = pick_locale(TRANSLATIONS, locale)
-    
     integrals = locale_data[:rub_integral]
     fractions = locale_data[:rub_fraction]
     
+    return zero(locale_data, integrals, fractions, locale == :ru) if amount.zero?
+    
+    parts = []
     parts << propisju_int(amount.to_i, 1, integrals, locale) unless amount.to_i == 0
     if amount.kind_of?(Float)
       remainder = (amount.divmod(1)[1]*100).round
@@ -220,7 +221,9 @@ module RuPropisju
     
     integrals = locale_root[:uah_integral]
     fractions = locale_root[:uah_fraction]
-
+    
+    return zero(locale_root, integrals, fractions, locale == 'ru') if amount.zero?
+    
     parts = []
     parts << propisju_int(amount.to_i, 2, integrals, locale) unless amount.to_i == 0
     if amount.kind_of? Float
@@ -243,7 +246,9 @@ module RuPropisju
     
     integrals = locale_root[:usd_integral]
     fractions = locale_root[:usd_fraction]
-
+    
+    return zero(locale_root, integrals, fractions, locale == 'ru') if amount.zero?
+    
     parts << propisju_int(amount.to_i, 1, integrals, locale) unless amount.to_i == 0
     if amount.kind_of?(Float)
       remainder = (amount.divmod(1)[1]*100).round
@@ -266,7 +271,9 @@ module RuPropisju
     
     integrals = locale_data[:eur_integral]
     fractions = locale_data[:eur_fraction]
-
+    
+    return zero(locale_root, integrals, fractions, locale == 'ru') if amount.zero?
+    
     parts << propisju_int(amount.to_i, 1, integrals, locale) unless amount.to_i == 0
     if amount.kind_of?(Float)
       remainder = (amount.divmod(1)[1]*100).round
@@ -303,6 +310,11 @@ module RuPropisju
 
   private
   
+  def zero(locale_data, integrals, fractions, fraction_as_number)
+    frac = fraction_as_number ? '0' : locale_data['0']
+    parts = [locale_data['0'], integrals[-1], frac, fractions[-1]]
+    parts.join(' ')
+  end
   
   # Cоставляет число прописью для чисел до тысячи
   
@@ -311,6 +323,9 @@ module RuPropisju
     remaining_amount = remaining_amount_or_nil.to_i
     
     locale = locale.to_s
+    
+    # Ноль чего-то
+    # return "ноль %s" % item_forms[3] if remaining_amount_or_nil.zero?
     
     rest, rest1, chosen_ordinal, ones, tens, hundreds = [nil]*6
     
@@ -437,6 +452,9 @@ module RuPropisju
     
     locale_root = pick_locale(TRANSLATIONS, locale)
     
+    # zero!
+    return [locale_root['0'], item_forms[-1]].compact.join(' ') if amount.zero?
+    
     fractions = [
       [:trillions, 1_000_000_000_000],
       [:billions, 1_000_000_000],
@@ -484,5 +502,5 @@ module RuPropisju
 
   public_instance_methods(true).map{|m| module_function(m) }
 
-  module_function :propisju_int, :propisju_float, :compose_ordinal, :pick_locale
+  module_function :zero, :propisju_int, :propisju_float, :compose_ordinal, :pick_locale
 end

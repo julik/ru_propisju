@@ -63,6 +63,7 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "сорок пять", RuPropisju.propisju(45, 1)
     assert_equal "пять", RuPropisju.propisju(5, 1)
     assert_equal "шестьсот двенадцать", RuPropisju.propisju(612, 1)
+    assert_equal "ноль", RuPropisju.propisju(0, 1)
 
 
     # ukrainian locale
@@ -129,6 +130,7 @@ class TestRuPropisju < Test::Unit::TestCase
   end
 
   def test_rublej
+    assert_equal "ноль рублей 0 копеек", RuPropisju.rublej(0)
     assert_equal "сто двадцать три рубля", RuPropisju.rublej(123)
     assert_equal "триста сорок три рубля 20 копеек", RuPropisju.rublej(343.20)
     assert_equal "42 копейки", RuPropisju.rublej(0.4187)
@@ -153,6 +155,8 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "триста тридцать две гривны", RuPropisju.griven(331.995)
     assert_equal "одна гривна", RuPropisju.grivna(1)
     assert_equal "три гривны четырнадцать копеек", RuPropisju.grivny(3.14)
+    assert_equal "ноль гривен 0 копеек", RuPropisju.griven(0)
+
     # ua locale
     assert_equal "сто двадцять три гривні", RuPropisju.griven(123, :ua)
     assert_equal "сто двадцять чотири гривні", RuPropisju.griven(124, :ua)
@@ -161,10 +165,12 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "триста тридцять дві гривні", RuPropisju.griven(331.995, :ua)
     assert_equal "одна гривня", RuPropisju.grivna(1, :ua)
     assert_equal "три гривні чотирнадцять копійок", RuPropisju.grivny(3.14, :ua)
+    assert_equal "нуль гривень нуль копійок", RuPropisju.griven(0, :ua)
 
   end
 
   def test_kopeek
+    assert_equal "ноль рублей 0 копеек", RuPropisju.kopeek(0)
     assert_equal "сто двадцать три рубля", RuPropisju.kopeek(12300)
     assert_equal "три рубля 14 копеек", RuPropisju.kopeek(314)
     assert_equal "32 копейки", RuPropisju.kopeek(32)
