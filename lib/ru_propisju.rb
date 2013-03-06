@@ -193,6 +193,26 @@ module RuPropisju
     money(amount, locale, integrals_key, fractions_key, money_gender, true)
   end
 
+  # Выводит целое или дробное число как сумму в расширенном формате
+  #
+  #   rublej_extended_format(345.2) #=> "345 рублей 20 копеек (триста сорок пять рублей 20 копеек)"
+  #
+  def rublej_extended_format(amount, locale = :ru)
+    "#{digit_rublej(amount, locale)} (#{rublej(amount, locale)})"
+  end
+
+  # Выводит целое или дробное число как сумму в рублях и копейках не прописью
+  #
+  #   digit_rublej(345.2) #=> "345 рублей 20 копеек"
+  #
+
+  def digit_rublej(amount, locale = :ru)
+    integrals_key = :rub_integral
+    fractions_key = :rub_fraction
+    money_gender = MONEY_GENDERS[:rub]
+
+    money(amount, locale, integrals_key, fractions_key, money_gender, true, true)
+  end
   # Выбирает корректный вариант числительного в зависимости от рода и числа и оформляет сумму прописью
   #
   #   propisju(243) => "двести сорок три"
@@ -259,16 +279,20 @@ module RuPropisju
     elements.join(" ")
   end
 
-
-  def money(amount, locale, integrals_key, fractions_key, money_gender, fraction_as_number = false)
+  def money(amount, locale, integrals_key, fractions_key, money_gender, fraction_as_number = false, integrals_as_number = false)
     locale_data = pick_locale(TRANSLATIONS, locale)
     integrals = locale_data[integrals_key]
     fractions = locale_data[fractions_key]
 
-    return zero(locale_data, integrals, fractions, fraction_as_number) if amount.zero?
+    return zero(locale_data, integrals, fractions, fraction_as_number, integrals_as_number) if amount.zero?
 
     parts = []
-    parts << propisju_int(amount.to_i, money_gender, integrals, locale) unless amount.to_i == 0
+    if integrals_as_number
+      parts << amount.to_i << choose_plural(amount, integrals) unless amount.to_i == 0
+    else
+      parts << propisju_int(amount.to_i, money_gender, integrals, locale) unless amount.to_i == 0
+    end
+
     if amount.kind_of?(Float)
       remainder = (amount.divmod(1)[1]*100).round
       if remainder == 100
@@ -290,9 +314,10 @@ module RuPropisju
 
   private
 
-  def zero(locale_data, integrals, fractions, fraction_as_number)
+  def zero(locale_data, integrals, fractions, fraction_as_number, integrals_as_number)
+    integ = integrals_as_number ? '0' : locale_data['0']
     frac = fraction_as_number ? '0' : locale_data['0']
-    parts = [locale_data['0'], integrals[-1], frac, fractions[-1]]
+    parts = [integ , integrals[-1], frac, fractions[-1]]
     parts.join(' ')
   end
   
@@ -433,7 +458,9 @@ module RuPropisju
     locale_root = pick_locale(TRANSLATIONS, locale)
     
     # zero!
-    return [locale_root['0'], item_forms[-1]].compact.join(' ') if amount.zero?
+    if amount.zero?
+      return [locale_root['0'], item_forms[-1]].compact.join(' ')
+    end
     
     fractions = [
       [:trillions, 1_000_000_000_000],
