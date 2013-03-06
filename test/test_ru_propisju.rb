@@ -155,7 +155,7 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "триста тридцать две гривны", RuPropisju.griven(331.995)
     assert_equal "одна гривна", RuPropisju.grivna(1)
     assert_equal "три гривны четырнадцать копеек", RuPropisju.grivny(3.14)
-    assert_equal "ноль гривен 0 копеек", RuPropisju.griven(0)
+    assert_equal "ноль гривен ноль копеек", RuPropisju.griven(0)
 
     # ua locale
     assert_equal "сто двадцять три гривні", RuPropisju.griven(123, :ua)

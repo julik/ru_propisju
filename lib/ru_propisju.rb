@@ -22,7 +22,7 @@ module RuPropisju
   SUPPORTED_CURRENCIES = CURRENCIES.keys.join ','
   
   TRANSLATIONS = {
-    "ru" => {
+    'ru' => {
       0 => "",
       '0' => "ноль",
       :thousands => ["тысяча", "тысячи", "тысяч"],
@@ -78,7 +78,7 @@ module RuPropisju
       :usd_integral => ["доллар", "доллара", "долларов"],
       :usd_fraction => ['цент', 'цента', 'центов'],
     },
-    "ua" => {
+    'ua' => {
       0 => "",
       '0' => "нуль",
       :thousands => ["тисяча", "тисячі", "тисяч"],
@@ -133,8 +133,15 @@ module RuPropisju
     }
   }
 
+  MONEY_GENDERS = {
+    :rub => 1,
+    :usd => 1,
+    :uah => 2,
+    :eur => 1,
+  }
 
-  # Кидается при запросе неизвестной валюты
+
+      # Кидается при запросе неизвестной валюты
   class UnknownCurrency < ArgumentError
   end
   
@@ -177,30 +184,35 @@ module RuPropisju
   # Выводит целое или дробное число как сумму в рублях прописью
   #
   #   rublej(345.2) #=> "триста сорок пять рублей 20 копеек"
+  #
   def rublej(amount, locale = :ru)
-    locale_data = pick_locale(TRANSLATIONS, locale)
-    integrals = locale_data[:rub_integral]
-    fractions = locale_data[:rub_fraction]
-    
-    return zero(locale_data, integrals, fractions, locale == :ru) if amount.zero?
-    
-    parts = []
-    parts << propisju_int(amount.to_i, 1, integrals, locale) unless amount.to_i == 0
-    if amount.kind_of?(Float)
-      remainder = (amount.divmod(1)[1]*100).round
-      if (remainder == 100)
-        parts = [propisju_int(amount.to_i + 1, 1, integrals, locale)]
-      else
-        kop = remainder.to_i
-        unless kop.zero?
-          parts << kop << choose_plural(kop, fractions)
-        end
-      end
-    end
-    
-    parts.join(' ')
+    integrals_key = :rub_integral
+    fractions_key = :rub_fraction
+    money_gender = MONEY_GENDERS[:rub]
+
+    money(amount, locale, integrals_key, fractions_key, money_gender, true)
   end
 
+  # Выводит целое или дробное число как сумму в расширенном формате
+  #
+  #   rublej_extended_format(345.2) #=> "345 рублей 20 копеек (триста сорок пять рублей 20 копеек)"
+  #
+  def rublej_extended_format(amount, locale = :ru)
+    "#{digit_rublej(amount, locale)} (#{rublej(amount, locale)})"
+  end
+
+  # Выводит целое или дробное число как сумму в рублях и копейках не прописью
+  #
+  #   digit_rublej(345.2) #=> "345 рублей 20 копеек"
+  #
+
+  def digit_rublej(amount, locale = :ru)
+    integrals_key = :rub_integral
+    fractions_key = :rub_fraction
+    money_gender = MONEY_GENDERS[:rub]
+
+    money(amount, locale, integrals_key, fractions_key, money_gender, true, true)
+  end
   # Выбирает корректный вариант числительного в зависимости от рода и числа и оформляет сумму прописью
   #
   #   propisju(243) => "двести сорок три"
@@ -216,75 +228,34 @@ module RuPropisju
   # Выводит целое или дробное число как сумму в гривнах прописью
   #
   #  griven(32) #=> "тридцать две гривны"
-  def griven(amount, locale = 'ru')
-    locale_root = pick_locale(TRANSLATIONS, locale)
-    
-    integrals = locale_root[:uah_integral]
-    fractions = locale_root[:uah_fraction]
-    
-    return zero(locale_root, integrals, fractions, locale == 'ru') if amount.zero?
-    
-    parts = []
-    parts << propisju_int(amount.to_i, 2, integrals, locale) unless amount.to_i == 0
-    if amount.kind_of? Float
-      remainder = (amount.divmod(1)[1]*100).round
-      if remainder == 100
-        parts = [propisju_int(amount.to_i + 1, 2, integrals, locale)]
-      else
-        parts << propisju_int(remainder.to_i, 2, fractions, locale)
-      end
-    end
-    parts.join(' ')
+  def griven(amount, locale = :ru)
+    integrals_key = :uah_integral
+    fractions_key = :uah_fraction
+    money_gender = MONEY_GENDERS[:uah]
+
+    money(amount, locale, integrals_key, fractions_key, money_gender)
   end
 
   # Выводит целое или дробное число как сумму в долларах прописью
   #
   #  dollarov(32) #=> "тридцать два доллара"
-  def dollarov(amount, locale = 'ru')
-    parts = []
-    locale_root = pick_locale(TRANSLATIONS, locale)
-    
-    integrals = locale_root[:usd_integral]
-    fractions = locale_root[:usd_fraction]
-    
-    return zero(locale_root, integrals, fractions, locale == 'ru') if amount.zero?
-    
-    parts << propisju_int(amount.to_i, 1, integrals, locale) unless amount.to_i == 0
-    if amount.kind_of?(Float)
-      remainder = (amount.divmod(1)[1]*100).round
-      if (remainder == 100)
-        parts = [propisju_int(amount.to_i + 1, 1, integrals, locale)]
-      else
-        parts << propisju_int(remainder.to_i, 1, fractions, locale)
-      end
-    end
+  def dollarov(amount, locale = :ru)
+    integrals_key = :usd_integral
+    fractions_key = :usd_fraction
+    money_gender = MONEY_GENDERS[:usd]
 
-    parts.join(' ')
+    money(amount, locale, integrals_key, fractions_key, money_gender)
   end
 
   # Выводит целое или дробное число как сумму в евро прописью
   #
   #  evro(32) #=> "тридцать два евро"
-  def evro(amount, locale = 'ru')
-    parts = []
-    locale_data = pick_locale(TRANSLATIONS, locale)
-    
-    integrals = locale_data[:eur_integral]
-    fractions = locale_data[:eur_fraction]
-    
-    return zero(locale_root, integrals, fractions, locale == 'ru') if amount.zero?
-    
-    parts << propisju_int(amount.to_i, 1, integrals, locale) unless amount.to_i == 0
-    if amount.kind_of?(Float)
-      remainder = (amount.divmod(1)[1]*100).round
-      if (remainder == 100)
-        parts = [propisju_int(amount.to_i + 1, 1, integrals, locale)]
-      else
-        parts << propisju_int(remainder.to_i, 1, fractions, locale)
-      end
-    end
+  def evro(amount, locale = :ru)
+    integrals_key = :eur_integral
+    fractions_key = :eur_fraction
+    money_gender = MONEY_GENDERS[:eur]
 
-    parts.join(' ')
+    money(amount, locale, integrals_key, fractions_key, money_gender)
   end
 
   # Выводит сумму прописью в рублях по количеству копеек
@@ -308,11 +279,45 @@ module RuPropisju
     elements.join(" ")
   end
 
+  def money(amount, locale, integrals_key, fractions_key, money_gender, fraction_as_number = false, integrals_as_number = false)
+    locale_data = pick_locale(TRANSLATIONS, locale)
+    integrals = locale_data[integrals_key]
+    fractions = locale_data[fractions_key]
+
+    return zero(locale_data, integrals, fractions, fraction_as_number, integrals_as_number) if amount.zero?
+
+    parts = []
+    if integrals_as_number
+      parts << amount.to_i << choose_plural(amount, integrals) unless amount.to_i == 0
+    else
+      parts << propisju_int(amount.to_i, money_gender, integrals, locale) unless amount.to_i == 0
+    end
+
+    if amount.kind_of?(Float)
+      remainder = (amount.divmod(1)[1]*100).round
+      if remainder == 100
+        parts = [propisju_int(amount.to_i + 1, money_gender, integrals, locale)]
+      else
+        if fraction_as_number
+          kop = remainder.to_i
+          unless kop.zero?
+            parts << kop << choose_plural(kop, fractions)
+          end
+        else
+          parts << propisju_int(remainder.to_i, money_gender, fractions, locale)
+        end
+      end
+    end
+
+    parts.join(' ')
+  end
+
   private
-  
-  def zero(locale_data, integrals, fractions, fraction_as_number)
+
+  def zero(locale_data, integrals, fractions, fraction_as_number, integrals_as_number)
+    integ = integrals_as_number ? '0' : locale_data['0']
     frac = fraction_as_number ? '0' : locale_data['0']
-    parts = [locale_data['0'], integrals[-1], frac, fractions[-1]]
+    parts = [integ , integrals[-1], frac, fractions[-1]]
     parts.join(' ')
   end
   
@@ -414,7 +419,7 @@ module RuPropisju
   # Выдает сумму прописью с учетом дробной доли. Дробная доля округляется до миллионной, или (если
   # дробная доля оканчивается на нули) до ближайшей доли ( 500 тысячных округляется до 5 десятых).
   # Дополнительный аргумент - род существительного (1 - мужской, 2- женский, 3-средний)
-  def propisju_float(num, locale = 'ru')
+  def propisju_float(num, locale = :ru)
     locale_root = pick_locale(DECIMALS, locale)
     source_expression = locale_root[:prefix][0]
     target_prefix = locale_root[:prefix][1]
@@ -453,7 +458,9 @@ module RuPropisju
     locale_root = pick_locale(TRANSLATIONS, locale)
     
     # zero!
-    return [locale_root['0'], item_forms[-1]].compact.join(' ') if amount.zero?
+    if amount.zero?
+      return [locale_root['0'], item_forms[-1]].compact.join(' ')
+    end
     
     fractions = [
       [:trillions, 1_000_000_000_000],
