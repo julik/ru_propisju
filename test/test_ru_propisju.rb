@@ -84,7 +84,11 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "двадцать одна подстава", RuPropisju.propisju_shtuk(21, 2, ["подстава", "подставы", "подстав"])
     assert_equal "двести двенадцать сволочей", RuPropisju.propisju_shtuk(212.00, 2, ["сволочь", "сволочи", "сволочей"])
     assert_equal "двести двенадцать целых четыре десятых куска", RuPropisju.propisju_shtuk(212.40, 2, ["кусок", "куска", "кусков"])
-
+    
+    # GH issue 10
+    # https://github.com/julik/ru_propisju/issues/10
+    assert_equal "одна тысяча сто две целых сорок одна сотая кубометра", RuPropisju.propisju_shtuk( 1102.41, 2, ["кубометр", "кубометра", "кубометров"])
+    
     # ua locale
     assert_equal "шість цілих", RuPropisju.propisju_shtuk(6, 2, ["ціла", "цілих", "цілих"], :ua)
     assert_equal "двадцять п'ять колес", RuPropisju.propisju_shtuk(25, 3, ["колесо", "колеса", "колес"], :ua)
@@ -99,6 +103,7 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "триста сорок одна целая двести сорок пять тысячных", RuPropisju.propisju(341.245, 1)
     assert_equal "двести три целых сорок одна сотая", RuPropisju.propisju(203.41, 1)
     assert_equal "четыреста сорок две целых пять десятых", RuPropisju.propisju(442.50000, 1)
+    
     # ua locale
     assert_equal "шість цілих п'ять десятих", RuPropisju.propisju(6.50, 1, :ua)
     assert_equal "триста сорок одна ціла дев'ять десятих", RuPropisju.propisju(341.9, 1, :ua)

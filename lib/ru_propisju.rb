@@ -6,7 +6,7 @@ $KCODE = 'u' if RUBY_VERSION < '1.9.0'
 #   RuPropisju.rublej(123) # "сто двадцать три рубля"
 module RuPropisju
 
-  VERSION = '2.2.1'
+  VERSION = '2.2.2'
   
   # http://www.xe.com/symbols.php
   # (лица, приближенные форексам и всяким там валютам и курсам)
@@ -432,7 +432,7 @@ module RuPropisju
     end.freeze
 
     # Укорачиваем до триллионной доли
-    formatted = ("%0.#{words.length}f" % num).gsub(/0+$/, '')
+    formatted = ("%0.#{words.length}g" % num).gsub(/0+$/, '')
     wholes, decimals = formatted.split(/\./)
 
     return propisju_int(wholes.to_i, 1, [], locale) if decimals.to_i.zero?

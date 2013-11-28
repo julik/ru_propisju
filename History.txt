@@ -1,3 +1,7 @@
+=== 2.2.2
+
+* Форматирование долей могло вызвать ошибку (https://github.com/julik/ru_propisju/issues/10)
+
 === 2.2.1
 
 * Опечатка в украинских числительных (https://github.com/julik/ru_propisju/pull/9)
