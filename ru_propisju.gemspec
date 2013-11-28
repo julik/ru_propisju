@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "ru_propisju"
-  s.version = "2.2.1"
+  s.version = "2.2.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Julik Tarkhanov"]
-  s.date = "2013-08-05"
+  s.date = "2013-11-28"
   s.email = "me@julik.nl"
   s.extra_rdoc_files = [
     "README.rdoc"
@@ -26,11 +26,11 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/julik/ru_propisju"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.25"
+  s.rubygems_version = "2.0.3"
   s.summary = "C\u{443}\u{43c}\u{43c}\u{430} \u{43f}\u{440}\u{43e}\u{43f}\u{438}\u{441}\u{44c}\u{44e}"
 
   if s.respond_to? :specification_version then
-    s.specification_version = 3
+    s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<jeweler>, [">= 0"])
