@@ -99,6 +99,10 @@ class TestRuPropisju < Test::Unit::TestCase
 
   def test_propisju_for_floats
     assert_equal "шесть целых пять десятых", RuPropisju.propisju(6.50, 1)
+    assert_equal "шесть", RuPropisju.propisju(6.0, 1)
+    assert_equal "тридцать миллиардов целых сто одиннадцать тысячных", RuPropisju.propisju(3 * 10**10 + 0.111, 1)
+    assert_equal "тридцать", RuPropisju.propisju(30.0, 1)
+    assert_equal "тридцать целых одна десятая", RuPropisju.propisju(30.1, 1)
     assert_equal "триста сорок одна целая девять десятых", RuPropisju.propisju(341.9, 1)
     assert_equal "триста сорок одна целая двести сорок пять тысячных", RuPropisju.propisju(341.245, 1)
     assert_equal "двести три целых сорок одна сотая", RuPropisju.propisju(203.41, 1)

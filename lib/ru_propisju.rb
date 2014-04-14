@@ -215,7 +215,7 @@ module RuPropisju
   end
   # Выбирает корректный вариант числительного в зависимости от рода и числа и оформляет сумму прописью
   #
-  #   propisju(243) => "двести сорок три"
+  #   propisju(243, 1) => "двести сорок три"
   #   propisju(221, 2) => "двести двадцать одна"
   def propisju(amount, gender, locale = :ru)
     if amount.is_a?(Integer) || amount.is_a?(Bignum)
@@ -417,8 +417,7 @@ module RuPropisju
   }
 
   # Выдает сумму прописью с учетом дробной доли. Дробная доля округляется до миллионной, или (если
-  # дробная доля оканчивается на нули) до ближайшей доли ( 500 тысячных округляется до 5 десятых).
-  # Дополнительный аргумент - род существительного (1 - мужской, 2- женский, 3-средний)
+  # дробная доля оканчивается на нули) до ближайшей доли или точки ( 500 тысячных округляется до 5 десятых, 30.0000 до 30).
   def propisju_float(num, locale = :ru)
     locale_root = pick_locale(DECIMALS, locale)
     source_expression = locale_root[:prefix][0]
@@ -432,8 +431,8 @@ module RuPropisju
     end.freeze
 
     # Укорачиваем до триллионной доли
-    formatted = ("%0.#{words.length}g" % num).gsub(/0+$/, '')
-    wholes, decimals = formatted.split(/\./)
+    formatted = num.to_s[/^\d+(\.\d{0,#{words.length}})?/].gsub(/0+$/, '')
+    wholes, decimals = formatted.split(".")
 
     return propisju_int(wholes.to_i, 1, [], locale) if decimals.to_i.zero?
 
