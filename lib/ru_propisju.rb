@@ -6,7 +6,7 @@ $KCODE = 'u' if RUBY_VERSION < '1.9.0'
 #   RuPropisju.rublej(123) # "сто двадцать три рубля"
 module RuPropisju
 
-  VERSION = '2.2.3'
+  VERSION = '2.2.4'
   
   # http://www.xe.com/symbols.php
   # (лица, приближенные форексам и всяким там валютам и курсам)
@@ -17,6 +17,7 @@ module RuPropisju
     "usd" => :dollarov,
     "uah" => :griven,
     "eur" => :evro,
+    "kzt" => :tenge,
   }
   
   SUPPORTED_CURRENCIES = CURRENCIES.keys.join ','
@@ -70,6 +71,8 @@ module RuPropisju
       :rub_fraction => ['копейка', 'копейки', 'копеек'],
       :uah_integral => ["гривна", "гривны", "гривен"],
       :uah_fraction => ['копейка', 'копейки', 'копеек'],
+      :kzt_integral => ["тенге", "тенге", "тенге"],
+      :kzt_fraction => ['тиын', 'тиына', 'тиынов'],
       :eur_integral => ["евро", "евро", "евро"],
       # по опыту моей прошлой работы в банке
       # центами называют дробную часть доллара
@@ -126,6 +129,8 @@ module RuPropisju
       :rub_fraction => ['копійка', 'копійки', 'копійок'],
       :uah_integral => ["гривня", "гривні", "гривень"],
       :uah_fraction => ["копійка", "копійки", "копійок"],
+      :kzt_integral => ["тенге", "тенге", "тенге"],
+      :kzt_fraction => ['тиын', 'тиына', 'тиынов'],
       :eur_integral => ["євро", "євро", "євро"],
       :eur_fraction => ["євроцент", "євроцента", "євроцентів"],
       :usd_integral => ["долар", "долара", "доларів"],
@@ -138,10 +143,11 @@ module RuPropisju
     :usd => 1,
     :uah => 2,
     :eur => 1,
+    :kzt => 1,
   }
 
 
-      # Кидается при запросе неизвестной валюты
+  # Кидается при запросе неизвестной валюты
   class UnknownCurrency < ArgumentError
   end
   
@@ -254,6 +260,17 @@ module RuPropisju
     integrals_key = :eur_integral
     fractions_key = :eur_fraction
     money_gender = MONEY_GENDERS[:eur]
+
+    money(amount, locale, integrals_key, fractions_key, money_gender)
+  end
+
+  # Выводит целое или дробное число как сумму в тенге прописью
+  #
+  #  tenge(32) #=> "тридцать два тенге"
+  def tenge(amount, locale = :ru)
+    integrals_key = :kzt_integral
+    fractions_key = :kzt_fraction
+    money_gender = MONEY_GENDERS[:kzt]
 
     money(amount, locale, integrals_key, fractions_key, money_gender)
   end

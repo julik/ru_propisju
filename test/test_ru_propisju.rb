@@ -17,6 +17,7 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "сто двадцать три рубля", RuPropisju.amount_in_words(123, "RUR")
     assert_equal "сто двадцать три рубля", RuPropisju.amount_in_words(123, "rur")
     assert_equal "сто двадцать три гривны", RuPropisju.amount_in_words(123, "uah")
+    assert_equal "сто двадцать три тенге", RuPropisju.amount_in_words(123, "kzt")
     assert_equal "сто двадцать три евро", RuPropisju.amount_in_words(123, "eur")
     assert_equal "сто двадцать три евро четырнадцать центов", RuPropisju.amount_in_words(123.14, "eur")
     assert_equal "сто двадцать три доллара четырнадцать центов", RuPropisju.amount_in_words(123.14, "usd")
@@ -27,6 +28,7 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "сто двадцять три рубля", RuPropisju.amount_in_words(123, "RUR", "ua")
     assert_equal "сто двадцять три рубля", RuPropisju.amount_in_words(123, "rur", "ua")
     assert_equal "сто двадцять три гривні", RuPropisju.amount_in_words(123, "uah", "ua")
+    assert_equal "сто двадцять три тенге", RuPropisju.amount_in_words(123, "kzt", "ua")
     assert_equal "сто двадцять три євро", RuPropisju.amount_in_words(123, "eur", "ua")
     assert_equal "сто двадцять три євро чотирнадцять євроцентів", RuPropisju.amount_in_words(123.14, "eur", :ua)
     assert_equal "сто двадцять три долара чотирнадцять центів", RuPropisju.amount_in_words(123.14, "usd", :ua)
@@ -35,6 +37,7 @@ class TestRuPropisju < Test::Unit::TestCase
   def test_issue_3
     assert_equal "два миллиона евро", RuPropisju.evro(2000000)
     assert_equal "два миллиона рублей", RuPropisju.rublej(2000000)
+    assert_equal "два миллиона тенге", RuPropisju.tenge(2000000)
     assert_equal "два миллиона рублей", RuPropisju.amount_in_words(2000000, :rub)
   end
   
@@ -46,6 +49,11 @@ class TestRuPropisju < Test::Unit::TestCase
   def test_propisju_euro
     assert_equal "сто двадцать один евро четыре цента", RuPropisju.evro(121.04)
     assert_equal "сто двадцять один євро чотири євроцента", RuPropisju.evro(121.04, :ua)
+  end
+
+  def test_propisju_tenge
+    assert_equal "сто двадцать один тенге четыре тиына", RuPropisju.tenge(121.04)
+    assert_equal "сто двадцять один тенге чотири тиына", RuPropisju.tenge(121.04, :ua)
   end
   
   def test_thousands_and_millions
@@ -175,7 +183,26 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "одна гривня", RuPropisju.grivna(1, :ua)
     assert_equal "три гривні чотирнадцять копійок", RuPropisju.grivny(3.14, :ua)
     assert_equal "нуль гривень нуль копійок", RuPropisju.griven(0, :ua)
+  end
 
+  def test_tenge
+    assert_equal "сто двадцать три тенге", RuPropisju.tenge(123)
+    assert_equal "сто двадцать четыре тенге", RuPropisju.tenge(124)
+    assert_equal "триста сорок три тенге двадцать тиынов", RuPropisju.tenge(343.20)
+    assert_equal "сорок два тиына", RuPropisju.tenge(0.4187)
+    assert_equal "триста тридцать два тенге", RuPropisju.tenge(331.995)
+    assert_equal "триста тридцать один тенге девяносто девять тиынов", RuPropisju.tenge(331.985)
+    assert_equal "один тенге", RuPropisju.tenge(1)
+    assert_equal "три тенге четырнадцать тиынов", RuPropisju.tenge(3.14)
+    assert_equal "ноль тенге ноль тиынов", RuPropisju.tenge(0)
+
+    # ua locale
+    assert_equal "сто двадцять три тенге", RuPropisju.tenge(123, :ua)
+    assert_equal "триста сорок три тенге двадцять тиынов", RuPropisju.tenge(343.20, :ua)
+    assert_equal "сорок два тиына", RuPropisju.tenge(0.4187, :ua)
+    assert_equal "триста тридцять два тенге", RuPropisju.tenge(331.995, :ua)
+    assert_equal "один тенге", RuPropisju.tenge(1, :ua)
+    assert_equal "три тенге чотирнадцять тиынов", RuPropisju.tenge(3.14, :ua)
   end
 
   def test_kopeek
