@@ -30,8 +30,8 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "ста двадцати трёх гривнах", RuPropisju.amount_in_words(123, "uah", "ru_in")
     assert_equal "ста двадцати трёх тенге", RuPropisju.amount_in_words(123, "kzt", "ru_in")
     assert_equal "ста двадцати трёх евро", RuPropisju.amount_in_words(123, "eur", "ru_in")
-    assert_equal "ста двадцати трёх евро четырнадцати центов", RuPropisju.amount_in_words(123.14, "eur", :ru_in)
-    assert_equal "ста двадцати трёх долларах четырнадцать центов", RuPropisju.amount_in_words(123.14, "usd", :ru_in)
+    assert_equal "ста двадцати трёх евро четырнадцати центах", RuPropisju.amount_in_words(123.14, "eur", :ru_in)
+    assert_equal "ста двадцати трёх долларах четырнадцати центах", RuPropisju.amount_in_words(123.14, "usd", :ru_in)
     
     # ua locale
     assert_equal "сто двадцять три рубля", RuPropisju.amount_in_words(123, :rur, :ua)
