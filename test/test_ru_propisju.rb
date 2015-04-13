@@ -32,7 +32,18 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "ста двадцати трёх евро", RuPropisju.amount_in_words(123, "eur", "ru_in")
     assert_equal "ста двадцати трёх евро четырнадцати центах", RuPropisju.amount_in_words(123.14, "eur", :ru_in)
     assert_equal "ста двадцати трёх долларах четырнадцати центах", RuPropisju.amount_in_words(123.14, "usd", :ru_in)
-    
+
+    # russian locale (творительный падеж)
+    assert_equal "ста двадцатью тремя рублями", RuPropisju.amount_in_words(123, :rur, :ru_from)
+    assert_equal "ста двадцатью тремя рублями", RuPropisju.amount_in_words(123, :rub, :ru_from)
+    assert_equal "ста двадцатью тремя рублями", RuPropisju.amount_in_words(123, "RUR", "ru_from")
+    assert_equal "ста двадцатью тремя рублями", RuPropisju.amount_in_words(123, "rur", "ru_from")
+    assert_equal "ста двадцатью тремя гривнами", RuPropisju.amount_in_words(123, "uah", "ru_from")
+    assert_equal "ста двадцатью тремя тенге", RuPropisju.amount_in_words(123, "kzt", "ru_from")
+    assert_equal "ста двадцатью тремя евро", RuPropisju.amount_in_words(123, "eur", "ru_from")
+    assert_equal "ста двадцатью тремя евро четырнадцатью центами", RuPropisju.amount_in_words(123.14, "eur", :ru_from)
+    assert_equal "ста двадцатью тремя долларами четырнадцатью центами", RuPropisju.amount_in_words(123.14, "usd", :ru_from)
+
     # ua locale
     assert_equal "сто двадцять три рубля", RuPropisju.amount_in_words(123, :rur, :ua)
     assert_equal "сто двадцять три рубля", RuPropisju.amount_in_words(123, :rub, :ua)
@@ -44,14 +55,14 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "сто двадцять три євро чотирнадцять євроцентів", RuPropisju.amount_in_words(123.14, "eur", :ua)
     assert_equal "сто двадцять три долара чотирнадцять центів", RuPropisju.amount_in_words(123.14, "usd", :ua)
   end
-  
+
   def test_issue_3
     assert_equal "два миллиона евро", RuPropisju.evro(2000000)
     assert_equal "два миллиона рублей", RuPropisju.rublej(2000000)
     assert_equal "два миллиона тенге", RuPropisju.tenge(2000000)
     assert_equal "два миллиона рублей", RuPropisju.amount_in_words(2000000, :rub)
   end
-  
+
   def test_propisju_dollarov
     assert_equal "сто двадцать один доллар пятьдесят один цент", RuPropisju.dollarov(121.51)
     assert_equal "сто двадцять один долар п'ятьдесят один цент", RuPropisju.dollarov(121.51, :ua)
@@ -66,11 +77,11 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "сто двадцать один тенге четыре тиына", RuPropisju.tenge(121.04)
     assert_equal "сто двадцять один тенге чотири тиына", RuPropisju.tenge(121.04, :ua)
   end
-  
+
   def test_thousands_and_millions
     assert_equal "два миллиона сто тысяч рублей", RuPropisju.amount_in_words(2100000, :rur)
   end
-  
+
   def test_propisju_for_ints
     assert_equal "пятьсот двадцать три", RuPropisju.propisju(523, 1)
     assert_equal "шесть тысяч семьсот двадцать семь", RuPropisju.propisju(6727, 1)
@@ -97,6 +108,19 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "пяти", RuPropisju.propisju(5, 1, :ru_in)
     assert_equal "шестистах двенадцати", RuPropisju.propisju(612, 1, :ru_in)
     assert_equal "нуле", RuPropisju.propisju(0, 1, :ru_in)
+
+    # творительный падеж для русской локали
+    assert_equal "пятьюстами двадцатью тремя", RuPropisju.propisju(523, 1, :ru_from)
+    assert_equal "шестью тысячами семьюстами двадцатью семью", RuPropisju.propisju(6727, 1, :ru_from)
+    assert_equal "одним миллионом одним", RuPropisju.propisju(1_000_001, 1, :ru_from)
+    assert_equal "одним миллионом", RuPropisju.propisju(1_000_000, 1, :ru_from)
+    assert_equal "восьмью миллионами шестьюстами пятьюдесятью двумя", RuPropisju.propisju(8000652, 1, :ru_from)
+    assert_equal "восьмью миллионами шестьюстами пятьюдесятью двумя", RuPropisju.propisju(8000652, 2, :ru_from)
+    assert_equal "восьмью миллионами шестьюстами пятьюдесятью двумя", RuPropisju.propisju(8000652, 3, :ru_from)
+    assert_equal "сорока пятью", RuPropisju.propisju(45, 1, :ru_from)
+    assert_equal "пятью", RuPropisju.propisju(5, 1, :ru_from)
+    assert_equal "шестьюстами двенадцатью", RuPropisju.propisju(612, 1, :ru_from)
+    assert_equal "нулём", RuPropisju.propisju(0, 1, :ru_from)
 
 
     # ukrainian locale
@@ -129,6 +153,13 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "двухстах двенадцати сволочах", RuPropisju.propisju_shtuk(212.00, 2, ["сволочи", "сволочах", "сволочах"], :ru_in)
     assert_equal "двухстах двенадцати целых четырёх десятых кусках", RuPropisju.propisju_shtuk(212.40, 2, ["куске", "кусках", "кусках"], :ru_in)
 
+    # творительный падеж русской локали
+    assert_equal "шестью целыми", RuPropisju.propisju_shtuk(6, 2, ["целой", "целыми", "целыми"], :ru_from)
+    assert_equal "двадцатью пятью колесами", RuPropisju.propisju_shtuk(25, 3, ["колесом", "колесами", "колесами"], :ru_from)
+    assert_equal "двадцатью одной подставой", RuPropisju.propisju_shtuk(21, 2, ["подставой", "подставами", "подставами"], :ru_from)
+    assert_equal "двумястами двенадцатью сволочами", RuPropisju.propisju_shtuk(212.00, 2, ["сволочью", "сволочами", "сволочами"], :ru_from)
+    assert_equal "двумястами двенадцатью целыми четырьмя десятыми кусками", RuPropisju.propisju_shtuk(212.40, 2, ["куском", "кусками", "кусками"], :ru_from)
+
     # ua locale
     assert_equal "шість цілих", RuPropisju.propisju_shtuk(6, 2, ["ціла", "цілих", "цілих"], :ua)
     assert_equal "двадцять п'ять колес", RuPropisju.propisju_shtuk(25, 3, ["колесо", "колеса", "колес"], :ua)
@@ -159,6 +190,17 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "двухстах трёх целых сорока одной сотой", RuPropisju.propisju(203.41, 1, :ru_in)
     assert_equal "четырёхстах сорока двух целых пяти десятых", RuPropisju.propisju(442.50000, 1, :ru_in)
 
+    # творительный падеж русской локали
+    assert_equal "шестью целыми пятью десятыми", RuPropisju.propisju(6.50, 1, :ru_from)
+    assert_equal "шестью", RuPropisju.propisju(6.0, 1, :ru_from)
+    assert_equal "тридцатью миллиардами целыми ста одиннадцатью тысячными", RuPropisju.propisju(3 * 10**10 + 0.111, 1, :ru_from)
+    assert_equal "тридцатью", RuPropisju.propisju(30.0, 1, :ru_from)
+    assert_equal "тридцатью целыми одной десятой", RuPropisju.propisju(30.1, 1, :ru_from)
+    assert_equal "тремястами сорока одной целой девятью десятыми", RuPropisju.propisju(341.9, 1, :ru_from)
+    assert_equal "тремястами сорока одной целой двумястами сорока пятью тысячными", RuPropisju.propisju(341.245, 1, :ru_from)
+    assert_equal "двумястами тремя целыми сорока одной сотой", RuPropisju.propisju(203.41, 1, :ru_from)
+    assert_equal "четырьмястами сорока двумя целыми пятью десятыми", RuPropisju.propisju(442.50000, 1, :ru_from)
+
     # ua locale
     assert_equal "шість цілих п'ять десятих", RuPropisju.propisju(6.50, 1, :ua)
     assert_equal "триста сорок одна ціла дев'ять десятих", RuPropisju.propisju(341.9, 1, :ua)
@@ -171,17 +213,17 @@ class TestRuPropisju < Test::Unit::TestCase
       assert_equal "чотириста сорок дві цілих п'ять десятих", RuPropisju.propisju(442.50000, 1, :kg)
     end
   end
-  
-  
+
+
   def test_choose_plural
     assert_equal "чемодана", RuPropisju.choose_plural(523, ["чемодан", "чемодана", "чемоданов"])
     assert_equal "партий", RuPropisju.choose_plural(6727, ["партия", "партии", "партий"])
     assert_equal "козлов", RuPropisju.choose_plural(45, ["козел", "козла", "козлов"])
     assert_equal "колес", RuPropisju.choose_plural(260, ["колесо", "колеса", "колес"])
-    
+
     # splat args
     assert_equal "колес", RuPropisju.choose_plural(260, "колесо", "колеса", "колес")
-    
+
     # ua locale
     assert_equal "валізи", RuPropisju.choose_plural(523, ["валіза", "валізи", "валіз"])
     assert_equal "партій", RuPropisju.choose_plural(6727, ["партія", "партії", "партій"])
@@ -206,6 +248,15 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "трёхстах тридцати двух рублях", RuPropisju.rublej(331.995, :ru_in)
     assert_equal "одном рубле", RuPropisju.rubl(1, :ru_in)
     assert_equal "трёх рублях 14 копейках", RuPropisju.rublja(3.14, :ru_in)
+
+    # ru locale творительный падеж
+    assert_equal "нулём рублями 0 копейками", RuPropisju.rublej(0, :ru_from)
+    assert_equal "ста двадцатью тремя рублями", RuPropisju.rublej(123, :ru_from)
+    assert_equal "тремястами сорока тремя рублями 20 копейками", RuPropisju.rublej(343.20, :ru_from)
+    assert_equal "42 копейками", RuPropisju.rublej(0.4187, :ru_from)
+    assert_equal "тремястами тридцатью двумя рублями", RuPropisju.rublej(331.995, :ru_from)
+    assert_equal "одним рублём", RuPropisju.rubl(1, :ru_from)
+    assert_equal "тремя рублями 14 копейками", RuPropisju.rublja(3.14, :ru_from)
 
     # ua locale
     assert_equal "сто двадцять три рубля", RuPropisju.rublej(123, :ua)
@@ -235,6 +286,16 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "одной гривне", RuPropisju.grivna(1, :ru_in)
     assert_equal "трёх гривнах четырнадцати копейках", RuPropisju.grivny(3.14, :ru_in)
     assert_equal "нуле гривнах нуле копейках", RuPropisju.griven(0, :ru_in)
+
+    # ru locale творительный падеж
+    assert_equal "ста двадцатью тремя гривнами", RuPropisju.griven(123, :ru_from)
+    assert_equal "ста двадцатью четырьмя гривнами", RuPropisju.griven(124, :ru_from)
+    assert_equal "тремястами сорока тремя гривнами двадцатью копейками", RuPropisju.griven(343.20, :ru_from)
+    assert_equal "сорока двумя копейками", RuPropisju.griven(0.4187, :ru_from)
+    assert_equal "тремястами тридцатью двумя гривнами", RuPropisju.griven(331.995, :ru_from)
+    assert_equal "одной гривной", RuPropisju.grivna(1, :ru_from)
+    assert_equal "тремя гривнами четырнадцатью копейками", RuPropisju.grivny(3.14, :ru_from)
+    assert_equal "нулём гривнами нулём копейками", RuPropisju.griven(0, :ru_from)
 
     # ua locale
     assert_equal "сто двадцять три гривні", RuPropisju.griven(123, :ua)
@@ -269,6 +330,17 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "трёх тенге четырнадцати тиынах", RuPropisju.tenge(3.14, :ru_in)
     assert_equal "нуле тенге нуле тиынах", RuPropisju.tenge(0, :ru_in)
 
+    # ru locale творительный падеж
+    assert_equal "ста двадцатью тремя тенге", RuPropisju.tenge(123, :ru_from)
+    assert_equal "ста двадцатью четырьмя тенге", RuPropisju.tenge(124, :ru_from)
+    assert_equal "тремястами сорока тремя тенге двадцатью тиынами", RuPropisju.tenge(343.20, :ru_from)
+    assert_equal "сорока двумя тиынами", RuPropisju.tenge(0.4187, :ru_from)
+    assert_equal "тремястами тридцатью двумя тенге", RuPropisju.tenge(331.995, :ru_from)
+    assert_equal "тремястами тридцатью одним тенге девяноста девятью тиынами", RuPropisju.tenge(331.985, :ru_from)
+    assert_equal "одним тенге", RuPropisju.tenge(1, :ru_from)
+    assert_equal "тремя тенге четырнадцатью тиынами", RuPropisju.tenge(3.14, :ru_from)
+    assert_equal "нулём тенге нулём тиынами", RuPropisju.tenge(0, :ru_from)
+
     # ua locale
     assert_equal "сто двадцять три тенге", RuPropisju.tenge(123, :ua)
     assert_equal "триста сорок три тенге двадцять тиынов", RuPropisju.tenge(343.20, :ua)
@@ -293,6 +365,14 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "32 копейках", RuPropisju.kopeek(32, :ru_in)
     assert_equal "21 копейке", RuPropisju.kopeika(21, :ru_in)
     assert_equal "3 копейках", RuPropisju.kopeiki(3, :ru_in)
+
+    # ru locale творительный падеж
+    assert_equal "нулём рублями 0 копейками", RuPropisju.kopeek(0, :ru_from)
+    assert_equal "ста двадцатью тремя рублями", RuPropisju.kopeek(12300, :ru_from)
+    assert_equal "тремя рублями 14 копейками", RuPropisju.kopeek(314, :ru_from)
+    assert_equal "32 копейками", RuPropisju.kopeek(32, :ru_from)
+    assert_equal "21 копейкой", RuPropisju.kopeika(21, :ru_from)
+    assert_equal "3 копейками", RuPropisju.kopeiki(3, :ru_from)
 
     # ua locale
     assert_equal "сто двадцять три рубля", RuPropisju.kopeek(12300, :ua)
