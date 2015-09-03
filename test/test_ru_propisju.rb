@@ -286,6 +286,11 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "триста тридцать два рубля", RuPropisju.rublej(331.995)
     assert_equal "один рубль", RuPropisju.rubl(1)
     assert_equal "три рубля 14 копеек", RuPropisju.rublja(3.14)
+    assert_equal "три рубля 2 копейки", RuPropisju.rublja(3.02)
+    assert_equal "одна тысяча рублей", RuPropisju.rublja(1000)
+    assert_equal "одна тысяча рублей", RuPropisju.rublja(1000.0)
+    assert_equal "1000 рублей", RuPropisju.digit_rublej(1000)
+    assert_equal "345 рублей 2 копейки", RuPropisju.digit_rublej(345.02)
 
     # ru locale предложный падеж
     assert_equal "нуле рублях 0 копейках", RuPropisju.rublej(0, :ru_in)
@@ -465,5 +470,46 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "32 копійки", RuPropisju.kopeek(32, :ua)
     assert_equal "21 копійка", RuPropisju.kopeika(21, :ua)
     assert_equal "3 копійки", RuPropisju.kopeiki(3, :ua)
+  end
+
+  def test_options
+    options = { :always_show_fraction => true }
+    assert_equal "ноль рублей 0 копеек", RuPropisju.rublej(0, :ru, options)
+    assert_equal "сто двадцать три рубля 0 копеек", RuPropisju.rublej(123, :ru, options)
+    assert_equal "триста сорок три рубля 20 копеек", RuPropisju.rublej(343.20, :ru, options)
+    assert_equal "триста сорок три рубля 70 копеек", RuPropisju.rublej(343.70, :ru, options)
+
+    assert_equal "42 копейки", RuPropisju.rublej(0.4187, :ru, options)
+    assert_equal "триста тридцать два рубля 0 копеек", RuPropisju.rublej(331.995, :ru, options)
+    assert_equal "один рубль 0 копеек", RuPropisju.rubl(1, :ru, options)
+    assert_equal "три рубля 14 копеек", RuPropisju.rublja(3.14, :ru, options)
+    assert_equal "три рубля 2 копейки", RuPropisju.rublja(3.02, :ru, options)
+    assert_equal "одна тысяча рублей 0 копеек", RuPropisju.rublja(1000, :ru, options)
+
+    assert_equal "1000 рублей 0 копеек", RuPropisju.digit_rublej(1000, :ru, options)
+    assert_equal "345 рублей 2 копейки", RuPropisju.digit_rublej(345.02, :ru, options)
+    assert_equal "4 рубля 60 копеек", RuPropisju.digit_rublej(4.60, :ru, options)
+
+    options_custom_formatter = { :fraction_formatter => '%02d', :integrals_formatter => '+%d', :integrals_delimiter => ' ', :always_show_fraction => true }
+    assert_equal "ноль рублей 00 копеек", RuPropisju.rublej(0, :ru, options_custom_formatter)
+    assert_equal "сто двадцать три рубля 00 копеек", RuPropisju.rublej(123, :ru, options_custom_formatter)
+    assert_equal "триста сорок три рубля 20 копеек", RuPropisju.rublej(343.20, :ru, options_custom_formatter)
+
+    assert_equal "42 копейки", RuPropisju.rublej(0.4187, :ru, options_custom_formatter)
+    assert_equal "триста тридцать два рубля 00 копеек", RuPropisju.rublej(331.995, :ru, options_custom_formatter)
+    assert_equal "один рубль 00 копеек", RuPropisju.rubl(1, :ru, options_custom_formatter)
+    assert_equal "три рубля 14 копеек", RuPropisju.rublja(3.14, :ru, options_custom_formatter)
+    assert_equal "три рубля 02 копейки", RuPropisju.rublja(3.02, :ru, options_custom_formatter)
+    assert_equal "одна тысяча рублей 00 копеек", RuPropisju.rublja(1000, :ru, options_custom_formatter)
+
+    assert_equal "+1 000 рублей 00 копеек", RuPropisju.digit_rublej(1000, :ru, options_custom_formatter)
+    assert_equal "+1 000 рублей 00 копеек", RuPropisju.digit_rublej(1000.0, :ru, options_custom_formatter)
+    assert_equal "+345 рублей 02 копейки", RuPropisju.digit_rublej(345.02, :ru, options_custom_formatter)
+
+    assert_equal "триста тридцять дві гривні нуль копійок", RuPropisju.griven(331.995, :ua, options_custom_formatter)
+    assert_equal "три тенге ноль тиынов", RuPropisju.tenge(3, :ru, options_custom_formatter)
+    assert_equal "триста сорок пять долларов два цента", RuPropisju.dollarov(345.02, :ru, options_custom_formatter)
+    assert_equal "три доллара ноль центов", RuPropisju.dollarov(3, :ru, options_custom_formatter)
+    assert_equal "три евро ноль центов", RuPropisju.evro(3, :ru, options_custom_formatter)
   end
 end

@@ -354,45 +354,61 @@ module RuPropisju
   # Поддерживаемые валюты: rur, usd, uah, eur
   #
   #   amount_in_words(345.2, 'rur') #=> "триста сорок пять рублей 20 копеек"
-  def amount_in_words(amount, currency, locale = :ru)
+  #
+  # ==== Опции
+  # * +:always_show_fraction+ - true/false. позволяет принудительно отображать 0 в качестве дробной части для целого числа
+  # * +:fraction_formatter+ - строка. формат отображения числа после точки, например '%d'
+  def amount_in_words(amount, currency, locale = :ru, options = {})
     currency = currency.to_s.downcase
     unless CURRENCIES.has_key? currency
       raise UnknownCurrency, "Unsupported currency #{currency}, the following are supported: #{SUPPORTED_CURRENCIES}"
     end
-    method(CURRENCIES[currency]).call(amount, locale)
+    method(CURRENCIES[currency]).call(amount, locale, options)
   end
 
   # Выводит целое или дробное число как сумму в рублях прописью
   #
   #   rublej(345.2) #=> "триста сорок пять рублей 20 копеек"
   #
-  def rublej(amount, locale = :ru)
+  # ==== Опции
+  # * +:always_show_fraction+ - true/false. позволяет принудительно отображать 0 в качестве дробной части для целого числа
+  # * +:fraction_formatter+ - строка. формат отображения числа после точки, например '%d'
+  def rublej(amount, locale = :ru, options = {})
     integrals_key = :rub_integral
     fractions_key = :rub_fraction
     money_gender = MONEY_GENDERS[:rub]
 
-    money(amount, locale, integrals_key, fractions_key, money_gender, true)
+    money(amount, locale, integrals_key, fractions_key, money_gender, true, false, options)
   end
 
   # Выводит целое или дробное число как сумму в расширенном формате
   #
   #   rublej_extended_format(345.2) #=> "345 рублей 20 копеек (триста сорок пять рублей 20 копеек)"
   #
-  def rublej_extended_format(amount, locale = :ru)
-    "#{digit_rublej(amount, locale)} (#{rublej(amount, locale)})"
+  # ==== Опции
+  # * +:always_show_fraction+ - true/false. позволяет принудительно отображать 0 в качестве дробной части для целого числа
+  # * +:fraction_formatter+ - строка. формат отображения числа после точки, например '%d'
+  # * +:integrals_formatter+ - строка. формат отображения целого числа, например '%d'
+  # * +:integrals_delimiter+ - строка. разделитель разрядов для целой части числа, например ' '
+  def rublej_extended_format(amount, locale = :ru, options = {})
+    "#{digit_rublej(amount, locale, options)} (#{rublej(amount, locale, options)})"
   end
 
   # Выводит целое или дробное число как сумму в рублях и копейках не прописью
   #
   #   digit_rublej(345.2) #=> "345 рублей 20 копеек"
   #
-
-  def digit_rublej(amount, locale = :ru)
+  # ==== Опции
+  # * +:always_show_fraction+ - true/false. позволяет принудительно отображать 0 в качестве дробной части для целого числа
+  # * +:fraction_formatter+ - строка. формат отображения числа после точки, например '%d'
+  # * +:integrals_formatter+ - строка. формат отображения целого числа, например '%d'
+  # * +:integrals_delimiter+ - строка. разделитель разрядов для целой части числа, например ' '
+  def digit_rublej(amount, locale = :ru, options = {})
     integrals_key = :rub_integral
     fractions_key = :rub_fraction
     money_gender = MONEY_GENDERS[:rub]
 
-    money(amount, locale, integrals_key, fractions_key, money_gender, true, true)
+    money(amount, locale, integrals_key, fractions_key, money_gender, true, true, options)
   end
   # Выбирает корректный вариант числительного в зависимости от рода и числа и оформляет сумму прописью
   #
@@ -409,52 +425,68 @@ module RuPropisju
   # Выводит целое или дробное число как сумму в гривнах прописью
   #
   #  griven(32) #=> "тридцать две гривны"
-  def griven(amount, locale = :ru)
+  #
+  # ==== Опции
+  # * +:always_show_fraction+ - true/false. позволяет принудительно отображать 0 в качестве дробной части для целого числа
+  def griven(amount, locale = :ru, options = {})
     integrals_key = :uah_integral
     fractions_key = :uah_fraction
     money_gender = MONEY_GENDERS[:uah]
 
-    money(amount, locale, integrals_key, fractions_key, money_gender)
+    money(amount, locale, integrals_key, fractions_key, money_gender, false, false, options)
   end
 
   # Выводит целое или дробное число как сумму в долларах прописью
   #
   #  dollarov(32) #=> "тридцать два доллара"
-  def dollarov(amount, locale = :ru)
+  #
+  # ==== Опции
+  # * +:always_show_fraction+ - true/false. позволяет принудительно отображать 0 в качестве дробной части для целого числа
+  def dollarov(amount, locale = :ru, options = {})
     integrals_key = :usd_integral
     fractions_key = :usd_fraction
     money_gender = MONEY_GENDERS[:usd]
 
-    money(amount, locale, integrals_key, fractions_key, money_gender)
+    money(amount, locale, integrals_key, fractions_key, money_gender, false, false, options)
   end
 
   # Выводит целое или дробное число как сумму в евро прописью
   #
   #  evro(32) #=> "тридцать два евро"
-  def evro(amount, locale = :ru)
+  #
+  # ==== Опции
+  # * +:always_show_fraction+ - true/false. позволяет принудительно отображать 0 в качестве дробной части для целого числа
+  def evro(amount, locale = :ru, options = {})
     integrals_key = :eur_integral
     fractions_key = :eur_fraction
     money_gender = MONEY_GENDERS[:eur]
 
-    money(amount, locale, integrals_key, fractions_key, money_gender)
+    money(amount, locale, integrals_key, fractions_key, money_gender, false, false, options)
   end
 
   # Выводит целое или дробное число как сумму в тенге прописью
   #
   #  tenge(32) #=> "тридцать два тенге"
-  def tenge(amount, locale = :ru)
+  #
+  # ==== Опции
+  # * +:always_show_fraction+ - true/false. позволяет принудительно отображать 0 в качестве дробной части для целого числа
+  def tenge(amount, locale = :ru, options = {})
     integrals_key = :kzt_integral
     fractions_key = :kzt_fraction
     money_gender = MONEY_GENDERS[:kzt]
 
-    money(amount, locale, integrals_key, fractions_key, money_gender)
+    money(amount, locale, integrals_key, fractions_key, money_gender, false, false, options)
   end
 
   # Выводит сумму прописью в рублях по количеству копеек
   #
   #  kopeek(343) #=> "три рубля 43 копейки"
-  def kopeek(amount, locale = :ru)
-    rublej(amount / 100.0, locale)
+  #
+  # ==== Опции
+  # * +:always_show_fraction+ - true/false. позволяет принудительно отображать 0 в качестве дробной части для целого числа
+  # * +:fraction_formatter+ - строка. формат отображения числа после точки, например '%d'
+  def kopeek(amount, locale = :ru, options = {})
+    rublej(amount / 100.0, locale, options)
   end
 
   # Выводит сумму данного существительного прописью и выбирает правильное число и падеж
@@ -471,34 +503,46 @@ module RuPropisju
     elements.join(" ")
   end
 
-  def money(amount, locale, integrals_key, fractions_key, money_gender, fraction_as_number = false, integrals_as_number = false)
+  def money(amount, locale, integrals_key, fractions_key, money_gender, fraction_as_number = false, integrals_as_number = false, options = {})
+
+    options[:integrals_formatter] ||= '%d'
+    options[:fraction_formatter] ||= '%d'
+    options[:integrals_delimiter] ||= ''
+    options[:always_show_fraction] ||= false
+
     locale_data = pick_locale(TRANSLATIONS, locale)
     integrals = locale_data[integrals_key]
     fractions = locale_data[fractions_key]
 
-    return zero(locale_data, integrals, fractions, fraction_as_number, integrals_as_number) if amount.zero?
+    return zero(locale_data, integrals, fractions, fraction_as_number, integrals_as_number, options) if amount.zero?
 
     parts = []
-    if integrals_as_number
-      parts << amount.to_i << choose_plural(amount, integrals) unless amount.to_i == 0
-    else
-      parts << propisju_int(amount.to_i, money_gender, integrals, locale) unless amount.to_i == 0
+
+    unless amount.to_i == 0
+      if integrals_as_number
+        parts << format_integral(amount.to_i, options) << choose_plural(amount.to_i, integrals)
+      else
+        parts << propisju_int(amount.to_i, money_gender, integrals, locale)
+      end
     end
 
     if amount.kind_of?(Float)
       remainder = (amount.divmod(1)[1]*100).round
       if remainder == 100
         parts = [propisju_int(amount.to_i + 1, money_gender, integrals, locale)]
+        parts << zero_fraction(locale, money_gender, fractions, fraction_as_number, options) if options[:always_show_fraction]
       else
         if fraction_as_number
           kop = remainder.to_i
-          unless kop.zero?
-            parts << kop << choose_plural(kop, fractions)
+          if (!kop.zero? || options[:always_show_fraction])
+            parts << format(options[:fraction_formatter], kop) << choose_plural(kop, fractions)
           end
         else
           parts << propisju_int(remainder.to_i, money_gender, fractions, locale)
         end
       end
+    else
+      parts << zero_fraction(locale, money_gender, fractions, fraction_as_number, options) if options[:always_show_fraction]
     end
 
     parts.join(' ')
@@ -506,11 +550,19 @@ module RuPropisju
 
   private
 
-  def zero(locale_data, integrals, fractions, fraction_as_number, integrals_as_number)
-    integ = integrals_as_number ? '0' : locale_data['0']
-    frac = fraction_as_number ? '0' : locale_data['0']
+  def zero(locale_data, integrals, fractions, fraction_as_number, integrals_as_number, options)
+    integ = integrals_as_number ? format(options[:integrals_formatter], 0) : locale_data['0']
+    frac = fraction_as_number ? format(options[:fraction_formatter], 0) : locale_data['0']
     parts = [integ , integrals[-1], frac, fractions[-1]]
     parts.join(' ')
+  end
+
+  def zero_fraction(locale, money_gender, fractions, fraction_as_number, options)
+    if fraction_as_number
+      [format(options[:fraction_formatter], 0), choose_plural(0, fractions)]
+    else
+      propisju_int(0, money_gender, fractions, locale)
+    end
   end
 
   # Cоставляет число прописью для чисел до тысячи
@@ -720,6 +772,19 @@ module RuPropisju
     parts_in_writing.compact.join(' ')
   end
 
+  def format_integral(number, options)
+    formatted_number = format(options[:integrals_formatter], number)
+    delimited_number(formatted_number, options[:integrals_delimiter])
+  end
+
+  def delimited_number(number, delimiter)
+    return number.to_s if delimiter == ''
+
+    number.to_s.gsub!(/(\d)(?=(\d\d\d)+(?!\d))/) do |digit_to_delimit|
+      "#{digit_to_delimit}#{delimiter}"
+    end || number.to_s
+  end
+
   def pick_locale(from_hash, locale)
     return from_hash[locale.to_s] if from_hash.has_key?(locale.to_s)
     raise UnknownLocale, "Unknown locale #{locale.inspect}"
@@ -739,5 +804,5 @@ module RuPropisju
 
   public_instance_methods(true).map{|m| module_function(m) }
 
-  module_function :zero, :propisju_int, :propisju_float, :compose_ordinal, :pick_locale
+  module_function :zero, :zero_fraction, :propisju_int, :propisju_float, :compose_ordinal, :pick_locale, :format_integral, :delimited_number
 end
