@@ -1,3 +1,7 @@
+=== 2.5.0
+
+* Добавлен набор опций форматирования (https://github.com/julik/ru_propisju/pull/16)
+
 === 2.4.0
 
 * Добавлен творительный падеж (только для русской локали) (https://github.com/julik/ru_propisju/pull/15)
