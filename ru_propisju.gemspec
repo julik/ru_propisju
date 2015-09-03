@@ -4,13 +4,13 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{ru_propisju}
-  s.version = "2.4.0"
+  s.name = "ru_propisju"
+  s.version = "2.5.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Julik Tarkhanov"]
-  s.date = %q{2015-04-13}
-  s.email = %q{me@julik.nl}
+  s.date = "2015-09-03"
+  s.email = "me@julik.nl"
   s.extra_rdoc_files = [
     "README.rdoc"
   ]
@@ -23,11 +23,11 @@ Gem::Specification.new do |s|
     "ru_propisju.gemspec",
     "test/test_ru_propisju.rb"
   ]
-  s.homepage = %q{http://github.com/julik/ru_propisju}
+  s.homepage = "http://github.com/julik/ru_propisju"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.6.2}
-  s.summary = %q{Cумма прописью}
+  s.rubygems_version = "1.8.23.2"
+  s.summary = "C\u{443}\u{43c}\u{43c}\u{430} \u{43f}\u{440}\u{43e}\u{43f}\u{438}\u{441}\u{44c}\u{44e}"
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
