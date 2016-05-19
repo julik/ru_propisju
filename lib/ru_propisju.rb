@@ -8,7 +8,7 @@ require 'bigdecimal'
 #   RuPropisju.rublej(123) # "сто двадцать три рубля"
 module RuPropisju
 
-  VERSION = '2.5.0'
+  VERSION = '2.5.1'
 
   # http://www.xe.com/symbols.php
   # (лица, приближенные форексам и всяким там валютам и курсам)

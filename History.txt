@@ -1,5 +1,9 @@
 === 2.5.0
 
+* Починено форматирование BigDecimal (https://github.com/julik/ru_propisju/pull/17)
+
+=== 2.5.0
+
 * Добавлен набор опций форматирования (https://github.com/julik/ru_propisju/pull/16)
 
 === 2.4.0
