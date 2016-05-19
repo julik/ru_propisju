@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 $KCODE = 'u' if RUBY_VERSION < '1.9.0'
 
+require 'bigdecimal'
+
 # Самый лучший, прекрасный, кривой и неотразимый суперпечататель суммы прописью для Ruby.
 #
 #   RuPropisju.rublej(123) # "сто двадцать три рубля"
@@ -526,7 +528,7 @@ module RuPropisju
       end
     end
 
-    if amount.kind_of?(Float)
+    if amount.kind_of?(Float) || amount.kind_of?(BigDecimal)
       remainder = (amount.divmod(1)[1]*100).round
       if remainder == 100
         parts = [propisju_int(amount.to_i + 1, money_gender, integrals, locale)]
