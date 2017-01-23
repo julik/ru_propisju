@@ -100,6 +100,8 @@ class TestRuPropisju < Test::Unit::TestCase
 
   def test_propisju_for_ints
     assert_equal "пятьсот двадцать три", RuPropisju.propisju(523, 1)
+    assert_equal "один миллион один", RuPropisju.propisju(1000001, 1)
+    assert_equal "один миллион", RuPropisju.propisju(1000000, 1)        
     assert_equal "шесть тысяч семьсот двадцать семь", RuPropisju.propisju(6727, 1)
     assert_equal "один миллион один", RuPropisju.propisju(1_000_001, 1)
     assert_equal "один миллион", RuPropisju.propisju(1_000_000, 1)
