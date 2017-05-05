@@ -70,6 +70,7 @@ module RuPropisju
       8 => "восемь",
       9 => "девять",
       :rub_integral => ["рубль", "рубля", "рублей"],
+      :bel_integral => ["белорусский рубль", "белорусских рубля", "белорусских рублей"],
       :rub_fraction => ['копейка', 'копейки', 'копеек'],
       :uah_integral => ["гривна", "гривны", "гривен"],
       :uah_fraction => ['копейка', 'копейки', 'копеек'],
@@ -383,6 +384,14 @@ module RuPropisju
     money(amount, locale, integrals_key, fractions_key, money_gender, true, false, options)
   end
 
+  def bel_rublej(amount, locale = :ru, options = {})
+    integrals_key = :bel_integral
+    fractions_key = :rub_fraction
+    money_gender = MONEY_GENDERS[:rub]
+
+    money(amount, locale, integrals_key, fractions_key, money_gender, true, false, options)
+  end
+
   # Выводит целое или дробное число как сумму в расширенном формате
   #
   #   rublej_extended_format(345.2) #=> "345 рублей 20 копеек (триста сорок пять рублей 20 копеек)"
@@ -520,7 +529,7 @@ module RuPropisju
 
     parts = []
 
-    unless amount.to_i == 0
+    if amount.to_i != 0 || integrals_key == :bel_integral
       if integrals_as_number
         parts << format_integral(amount.to_i, options) << choose_plural(amount.to_i, integrals)
       else
