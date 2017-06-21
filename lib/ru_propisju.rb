@@ -20,6 +20,7 @@ module RuPropisju
     "uah" => :griven,
     "eur" => :evro,
     "kzt" => :tenge,
+    "kgs" => :som
   }
 
   SUPPORTED_CURRENCIES = CURRENCIES.keys.join ','
@@ -75,6 +76,8 @@ module RuPropisju
       :uah_fraction => ['копейка', 'копейки', 'копеек'],
       :kzt_integral => ["тенге", "тенге", "тенге"],
       :kzt_fraction => ['тиын', 'тиына', 'тиынов'],
+      :kgs_integral => ["сом", "сома", "сомов"],
+      :kgs_fraction => ['тыйын', 'тыйына', 'тыйынов'],
       :eur_integral => ["евро", "евро", "евро"],
       # по опыту моей прошлой работы в банке
       # центами называют дробную часть доллара
@@ -133,6 +136,8 @@ module RuPropisju
       :uah_fraction => %w[копейке копейках копейках],
       :kzt_integral => %w[тенге тенге тенге],
       :kzt_fraction => %w[тиыне тиынах тиынах],
+      :kgs_integral => %w[соме сомах сомах],
+      :kgs_fraction => %w[тыйыне тыйынах тыйынах],
       :eur_integral => %w[евро евро евро],
       # по опыту моей прошлой работы в банке
       # центами называют дробную часть доллара
@@ -191,6 +196,8 @@ module RuPropisju
        :uah_fraction => %w[копейки копеек копеек],
        :kzt_integral => %w[тенге тенге тенге],
        :kzt_fraction => %w[тиына тиынов тиынов],
+       :kgs_integral => %w[сома сомов сомов],
+       :kgs_fraction => %w[тыйына тыйынов тыйынов],
        :eur_integral => %w[евро евро евро],
        # TODO: решить как же всё-таки звать дробную часть евро: "цент" или "евроцент"
        :eur_fraction => %w[цента центов центов],
@@ -247,6 +254,8 @@ module RuPropisju
       :uah_fraction => ['копейкой', 'копейками', 'копейками'],
       :kzt_integral => ["тенге", "тенге", "тенге"],
       :kzt_fraction => ['тиыной', 'тиынами', 'тиынами'],
+      :kgs_integral => ["сомом", "сомами", "сомами"],
+      :kgs_fraction => ['тыйыном', 'тыйынами', 'тыйынами'],
       :eur_integral => ["евро", "евро", "евро"],
       # по опыту моей прошлой работы в банке
       # центами называют дробную часть доллара
@@ -305,6 +314,8 @@ module RuPropisju
       :uah_fraction => ["копійка", "копійки", "копійок"],
       :kzt_integral => ["тенге", "тенге", "тенге"],
       :kzt_fraction => ['тиын', 'тиына', 'тиынов'],
+      :kgs_integral => ["сом", "сома", "сомов"],
+      :kgs_fraction => ['тыйын', 'тыйына', 'тыйынов'],
       :eur_integral => ["євро", "євро", "євро"],
       :eur_fraction => ["євроцент", "євроцента", "євроцентів"],
       :usd_integral => ["долар", "долара", "доларів"],
@@ -321,6 +332,7 @@ module RuPropisju
     :uah => 2,
     :eur => 1,
     :kzt => 1,
+    :kgs => 1
   }
 
 
@@ -476,6 +488,20 @@ module RuPropisju
     integrals_key = :kzt_integral
     fractions_key = :kzt_fraction
     money_gender = MONEY_GENDERS[:kzt]
+
+    money(amount, locale, integrals_key, fractions_key, money_gender, false, false, options)
+  end
+
+  # Выводит целое или дробное число как сумму в сомах прописью
+  #
+  #  som(32) #=> "тридцать два сома"
+  #
+  # ==== Опции
+  # * +:always_show_fraction+ - true/false. позволяет принудительно отображать 0 в качестве дробной части для целого числа
+  def som(amount, locale = :ru, options = {})
+    integrals_key = :kgs_integral
+    fractions_key = :kgs_fraction
+    money_gender = MONEY_GENDERS[:kgs]
 
     money(amount, locale, integrals_key, fractions_key, money_gender, false, false, options)
   end
