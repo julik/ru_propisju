@@ -429,7 +429,7 @@ module RuPropisju
   #   propisju(243, 1) => "двести сорок три"
   #   propisju(221, 2) => "двести двадцать одна"
   def propisju(amount, gender, locale = :ru)
-    if amount.is_a?(Integer) || amount.is_a?(Bignum)
+    if amount.kind_of?(Integer)
       propisju_int(amount, gender, [], locale)
     else # также сработает для Decimal, дробные десятичные числительные в долях поэтому женского рода
       propisju_float(amount, locale)
