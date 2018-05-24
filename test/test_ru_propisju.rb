@@ -104,6 +104,66 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "два миллиона сто тысяч рублей", RuPropisju.amount_in_words(2100000, :rur)
   end
 
+  def test_bilions_and_trilions
+    assert_equal "четыреста триллионов триста миллиардов двести миллионов сто тысяч рублей", RuPropisju.rublej(400_300_200_100_000, :ru)
+    assert_raise_message(/too large/){
+      RuPropisju.rublej(1_400_300_200_100_000, :ru)
+    }
+  end
+
+  def test_locales_integrity
+    numeric_keys = [
+        '0', #?? 
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+        10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+        20, 30, 40, 50, 60, 70, 80, 90,
+        100, 200, 300, 400, 500, 600, 700, 800, 900,
+    ]
+    bignum_keys = [
+      :thousands, :millions, :billions,
+      :trillions,
+    ]
+    currency_franctions = [
+      :rub_integral, :rub_fraction,
+      :uah_integral, :uah_fraction,
+      :kzt_integral, :kzt_fraction,
+      :kgs_integral, :kgs_fraction,
+      :eur_integral, :eur_fraction,
+      :usd_integral, :usd_fraction,
+    ]
+    all_keys = (numeric_keys + bignum_keys + currency_franctions)
+    missing = Hash.new(){|h,k| h[k] = []}
+    have_extra = false
+
+    RuPropisju::TRANSLATIONS.each_pair do |locale_name, locale|
+      numeric_keys.each do |key|
+        missing[locale_name] << key unless locale[key].is_a?(String) ||
+          locale[key].is_a?(Hash) &&
+            locale[key].keys == [1, 2, 3] &&
+            locale[key].values.all?{|v| v.is_a? String }
+      end
+      bignum_keys.each do |key|
+        missing[locale_name] << key unless locale[key].is_a?(Array) &&
+          locale[key].size == 3 &&
+          locale[key].all?{|v| v.is_a? String }
+      end
+      currency_franctions.each do |key|
+        missing[locale_name] << key unless locale[key].is_a?(Array) &&
+          locale[key].size == 3 &&
+          locale[key].all?{|v| v.is_a? String }
+      end
+
+      extra_keys = locale.keys - all_keys
+      if extra_keys.any?
+        warn "Extra keys in #{locale_name}: #{(extra_keys).inspect}"
+        have_extra = true
+      end
+    end
+
+    assert_equal({}, missing)
+    pend "have extra keys in some locales" if have_extra
+  end
+
   def test_propisju_for_ints
     assert_equal "пятьсот двадцать три", RuPropisju.propisju(523, 1)
     assert_equal "шесть тысяч семьсот двадцать семь", RuPropisju.propisju(6727, 1)
