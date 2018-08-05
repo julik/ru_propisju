@@ -1,7 +1,8 @@
 # -*- encoding: utf-8 -*-
+require File.dirname(__FILE__) + '/lib/ru_propisju'
 Gem::Specification.new do |s|
   s.name = "ru_propisju"
-  s.version = "2.5.1"
+  s.version = RuPropisju::VERSION
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
@@ -9,14 +10,14 @@ Gem::Specification.new do |s|
   s.date = "2016-05-20"
   s.email = "me@julik.nl"
   s.extra_rdoc_files = [
-    "README.rdoc"
+    "README.md",
+    "LICENSE.txt",
+    
   ]
 
-  # Prevent pushing this gem to RubyGems.org.
-  # To allow pushes either set the 'allowed_push_host'
-  # To allow pushing to a single host or delete this section to allow pushing to any host.
   if s.respond_to?(:metadata)
     s.metadata['allowed_push_host'] = 'https://rubygems.org'
+    s.metadata["changelog_uri"] = 'https://github.com/julik/ru_propisju/blob/master/CHANGELOG.md'
   else
     raise 'RubyGems 2.0 or newer is required to protect against ' \
       'public gem pushes.'
