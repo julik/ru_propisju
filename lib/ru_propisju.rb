@@ -8,7 +8,7 @@ require 'bigdecimal'
 #   RuPropisju.rublej(123) # "сто двадцать три рубля"
 module RuPropisju
 
-  VERSION = '2.6.0'
+  VERSION = '2.6.1'
 
   # http://www.xe.com/symbols.php
   # (лица, приближенные форексам и всяким там валютам и курсам)
@@ -20,11 +20,18 @@ module RuPropisju
     "uah" => :griven,
     "eur" => :evro,
     "kzt" => :tenge,
-    "kgs" => :som
+    "kgs" => :som,
+    'chf' => :francov,
+    'cny' => :yuanej,
+    'gbp' => :sterlingov,
+    'hkd' => :hk_dollarov,
+    'jpy' => :yen,
+    'try' => :lir
   }
 
   SUPPORTED_CURRENCIES = CURRENCIES.keys.join ','
 
+  # Наименования указаны в соответствии с общероссийским классификатором валют
   TRANSLATIONS = {
     'ru' => {
       0 => "",
@@ -86,6 +93,18 @@ module RuPropisju
       :eur_fraction => ["цент", "цента", "центов"],
       :usd_integral => ["доллар", "доллара", "долларов"],
       :usd_fraction => ['цент', 'цента', 'центов'],
+      :chf_integral => ['швейцарский франк', 'швейцарских франка', 'швейцарских франков'],
+      :chf_fraction => ['сантим', 'сантима', 'сантимов'],
+      :cny_integral => ['юань', 'юаня', 'юаней'],
+      :cny_fraction => ['фэнь', 'фэня', 'фэней'],
+      :gbp_integral => ['фунт стерлингов', 'фунта стерлингов', 'фунтов стерлингов'],
+      :gbp_fraction => ['пенс', 'пенса', 'пенсов'],
+      :hkd_integral => ['гонконгский доллар', 'гонконгских доллара', 'гонконгских долларов'],
+      :hkd_fraction => ["цент", "цента", "центов"],
+      :jpy_integral => ['иена', 'иены', 'иен'],
+      :jpy_fraction => ['сен', 'сены', 'сен'],
+      :try_integral => ['турецкая лира', 'турецкие лиры', 'турецких лир'],
+      :try_fraction => ['куруш', 'куруш', 'куруш']
     },
     'ru_in' => { # Предложный падеж, например в 2 городах
       0 => "",
@@ -147,6 +166,18 @@ module RuPropisju
       :eur_fraction => %w[центе центах центах],
       :usd_integral => %w[долларе долларах долларах],
       :usd_fraction => %w[центе центах центах],
+      :chf_integral => ['швейцарском франке', 'швейцарских франках', 'швейцарских франках'],
+      :chf_fraction => %w[сантиме сантимах сантимах],
+      :cny_integral => %w[юане юанях юанях],
+      :cny_fraction => %w[фэне фэнях фэнях],
+      :gbp_integral => ['фунте стерлингов', 'фунтах стерлингов', 'фунтах стерлингов'],
+      :gbp_fraction => %w[пенсе пенсах пенсах],
+      :hkd_integral => ['гонконгском долларе', 'гонконгских долларах', 'гонконгских долларах'],
+      :hkd_fraction => %w[центе центах центах],
+      :jpy_integral => %w[иене иен иенах],
+      :jpy_fraction => %w[сене сен сенах],
+      :try_integral => ['турецкой лире', 'турецких лир', 'турецких лирах'],
+      :try_fraction => ['куруше', 'куруш', 'куруш']
     },
     'ru_gen' => { # Родительный падеж, например в течение одного рабочего дня, пяти ночей (нуля рабочих дней)
        0 => '',
@@ -206,6 +237,18 @@ module RuPropisju
        :eur_fraction => %w[цента центов центов],
        :usd_integral => %w[доллара долларов долларов],
        :usd_fraction => %w[цента центов центов],
+       :chf_integral => ['швейцарского франка', 'швейцарских франков', 'швейцарских франков'],
+       :chf_fraction => %w[сантима сантимов сантимов],
+       :cny_integral => %w[юаня юаней юаней],
+       :cny_fraction => %w[фэня фэней фэней],
+       :gbp_integral => ['фунта стерлингов', 'фунтов стерлингов', 'фунтов стерлингов'],
+       :gbp_fraction => %w[пенсе пенсов пенсов],
+       :hkd_integral => ['гонконгского доллара', 'гонконгских долларов', 'гонконгских долларов'],
+       :hkd_fraction => %w[цента центов центов],
+       :jpy_integral => %w[иены иен иен],
+       :jpy_fraction => %w[сен сен сен],
+       :try_integral => ['турецкой лиры', 'турецких лир', 'турецких лир'],
+       :try_fraction => ['куруша', 'куруш', 'куруш']
     },
     'ru_from' => {
       0 => "",
@@ -267,6 +310,18 @@ module RuPropisju
       :eur_fraction => ["центом", "центами", "центами"],
       :usd_integral => ["долларом", "долларами", "долларами"],
       :usd_fraction => ['центом', 'центами', 'центами'],
+      :chf_integral => ['швейцарским франком', 'швейцарскими франками', 'швейцарскими франками'],
+      :chf_fraction => %w[сантимом сантимами сантимами],
+      :cny_integral => %w[юанем юанями юанями],
+      :cny_fraction => %w[фэнем фэнями фэнями],
+      :gbp_integral => ['фунтом стерлингов', 'фунтами стерлингов', 'фунтами стерлингов'],
+      :gbp_fraction => %w[пенсом пенсами пенсами],
+      :hkd_integral => ['гонконгским долларом', 'гонконгскими долларами', 'гонконгскими долларами'],
+      :hkd_fraction => ['центом', 'центами', 'центами'],
+      :jpy_integral => %w[иеной иенами иенами],
+      :jpy_fraction => %w[сеном сенами сенами],
+      :try_integral => ['турецкой лирой', 'турецкими лирами', 'турецкими лирами'],
+      :try_fraction => ['курушем', 'курушами', 'курушами']
     },
     'ua' => {
       0 => "",
@@ -325,6 +380,18 @@ module RuPropisju
       :eur_fraction => ["євроцент", "євроцента", "євроцентів"],
       :usd_integral => ["долар", "долара", "доларів"],
       :usd_fraction => ['цент', 'цента', 'центів'],
+      :chf_integral => ['швейцарський франк', 'швейцарських франків', 'швейцарських франків'],
+      :chf_fraction => ['сантим', 'сантима', 'сантимів'],
+      :cny_integral => ['юань', 'юаня', 'юанів'],
+      :cny_fraction => ['фень', 'феня', 'феней'],
+      :gbp_integral => ['фунт стерлінгів', 'фунта стерлінгів', 'фунтів стерлінгів'],
+      :gbp_fraction => ['пенс', 'пенса', 'пенсів'],
+      :hkd_integral => ['гонконгський долар', 'гонконгського долара', 'гонконгських доларів'],
+      :hkd_fraction => ["цент", "цента", "центів"],
+      :jpy_integral => ['ієна', 'ієни', 'єн'],
+      :jpy_fraction => ['сен', 'сіна', 'сен'],
+      :try_integral => ['турецька ліра', 'турецькі ліри', 'турецьких лір'],
+      :try_fraction => ['куруш', 'куруша', 'куруш']
     }
   }
   # Переименовал предложный падеж из _in в _pre (prepositional)
@@ -337,7 +404,13 @@ module RuPropisju
     :uah => 2,
     :eur => 1,
     :kzt => 1,
-    :kgs => 1
+    :kgs => 1,
+    :chf => 1,
+    :cny => 1,
+    :gbp => 1,
+    :hkd => 1,
+    :jpy => 2,
+    :try => 2
   }
 
 
@@ -441,74 +514,21 @@ module RuPropisju
     end
   end
 
-  # Выводит целое или дробное число как сумму в гривнах прописью
-  #
-  #  griven(32) #=> "тридцать две гривны"
-  #
-  # ==== Опции
-  # * +:always_show_fraction+ - true/false. позволяет принудительно отображать 0 в качестве дробной части для целого числа
-  def griven(amount, locale = :ru, options = {})
-    integrals_key = :uah_integral
-    fractions_key = :uah_fraction
-    money_gender = MONEY_GENDERS[:uah]
-
-    money(amount, locale, integrals_key, fractions_key, money_gender, false, false, options)
-  end
-
-  # Выводит целое или дробное число как сумму в долларах прописью
+  # Выводит целое или дробное число как сумму для валюты прописью
   #
   #  dollarov(32) #=> "тридцать два доллара"
   #
   # ==== Опции
   # * +:always_show_fraction+ - true/false. позволяет принудительно отображать 0 в качестве дробной части для целого числа
-  def dollarov(amount, locale = :ru, options = {})
-    integrals_key = :usd_integral
-    fractions_key = :usd_fraction
-    money_gender = MONEY_GENDERS[:usd]
+  CURRENCIES.reject { |k, _v| ['rub', 'rur'].include? k }.each do |key, name|
 
-    money(amount, locale, integrals_key, fractions_key, money_gender, false, false, options)
-  end
+    define_method(name) do |amount, locale = :ru, options = {}| # or even |*args|
+      integrals_key = "#{key}_integral".to_sym
+      fractions_key = "#{key}_fraction".to_sym
+      money_gender = MONEY_GENDERS[key.to_sym]
 
-  # Выводит целое или дробное число как сумму в евро прописью
-  #
-  #  evro(32) #=> "тридцать два евро"
-  #
-  # ==== Опции
-  # * +:always_show_fraction+ - true/false. позволяет принудительно отображать 0 в качестве дробной части для целого числа
-  def evro(amount, locale = :ru, options = {})
-    integrals_key = :eur_integral
-    fractions_key = :eur_fraction
-    money_gender = MONEY_GENDERS[:eur]
-
-    money(amount, locale, integrals_key, fractions_key, money_gender, false, false, options)
-  end
-
-  # Выводит целое или дробное число как сумму в тенге прописью
-  #
-  #  tenge(32) #=> "тридцать два тенге"
-  #
-  # ==== Опции
-  # * +:always_show_fraction+ - true/false. позволяет принудительно отображать 0 в качестве дробной части для целого числа
-  def tenge(amount, locale = :ru, options = {})
-    integrals_key = :kzt_integral
-    fractions_key = :kzt_fraction
-    money_gender = MONEY_GENDERS[:kzt]
-
-    money(amount, locale, integrals_key, fractions_key, money_gender, false, false, options)
-  end
-
-  # Выводит целое или дробное число как сумму в сомах прописью
-  #
-  #  som(32) #=> "тридцать два сома"
-  #
-  # ==== Опции
-  # * +:always_show_fraction+ - true/false. позволяет принудительно отображать 0 в качестве дробной части для целого числа
-  def som(amount, locale = :ru, options = {})
-    integrals_key = :kgs_integral
-    fractions_key = :kgs_fraction
-    money_gender = MONEY_GENDERS[:kgs]
-
-    money(amount, locale, integrals_key, fractions_key, money_gender, false, false, options)
+      money(amount, locale, integrals_key, fractions_key, money_gender, false, false, options)
+    end
   end
 
   # Выводит сумму прописью в рублях по количеству копеек
