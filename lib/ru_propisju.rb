@@ -102,9 +102,9 @@ module RuPropisju
       :hkd_integral => ['гонконгский доллар', 'гонконгских доллара', 'гонконгских долларов'],
       :hkd_fraction => ["цент", "цента", "центов"],
       :jpy_integral => ['иена', 'иены', 'иен'],
-      :jpy_fraction => ['сен', 'сены', 'сен'],
+      :jpy_fraction => ['сен', 'сена', 'сенов'],
       :try_integral => ['турецкая лира', 'турецкие лиры', 'турецких лир'],
-      :try_fraction => ['куруш', 'куруш', 'куруш']
+      :try_fraction => ['куруш', 'куруша', 'курушей']
     },
     'ru_in' => { # Предложный падеж, например в 2 городах
       0 => "",
@@ -177,7 +177,7 @@ module RuPropisju
       :jpy_integral => %w[иене иен иенах],
       :jpy_fraction => %w[сене сен сенах],
       :try_integral => ['турецкой лире', 'турецких лир', 'турецких лирах'],
-      :try_fraction => ['куруше', 'куруш', 'куруш']
+      :try_fraction => ['куруше', 'курушах', 'курушах']
     },
     'ru_gen' => { # Родительный падеж, например в течение одного рабочего дня, пяти ночей (нуля рабочих дней)
        0 => '',
@@ -246,9 +246,9 @@ module RuPropisju
        :hkd_integral => ['гонконгского доллара', 'гонконгских долларов', 'гонконгских долларов'],
        :hkd_fraction => %w[цента центов центов],
        :jpy_integral => %w[иены иен иен],
-       :jpy_fraction => %w[сен сен сен],
+       :jpy_fraction => %w[сен сенов сенов],
        :try_integral => ['турецкой лиры', 'турецких лир', 'турецких лир'],
-       :try_fraction => ['куруша', 'куруш', 'куруш']
+       :try_fraction => ['куруша', 'курушей', 'курушей']
     },
     'ru_from' => {
       0 => "",
@@ -389,7 +389,7 @@ module RuPropisju
       :hkd_integral => ['гонконгський долар', 'гонконгського долара', 'гонконгських доларів'],
       :hkd_fraction => ["цент", "цента", "центів"],
       :jpy_integral => ['ієна', 'ієни', 'єн'],
-      :jpy_fraction => ['сен', 'сіна', 'сен'],
+      :jpy_fraction => ['сен', 'сіна', 'сінів'],
       :try_integral => ['турецька ліра', 'турецькі ліри', 'турецьких лір'],
       :try_fraction => ['куруш', 'куруша', 'куруш']
     }
@@ -411,6 +411,21 @@ module RuPropisju
     :hkd => 1,
     :jpy => 2,
     :try => 2
+  }
+
+  FRACTION_GENDERS = {
+    :rub => 2,
+    :usd => 1,
+    :uah => 2,
+    :eur => 1,
+    :kzt => 1,
+    :kgs => 1,
+    :chf => 1,
+    :cny => 1,
+    :gbp => 1,
+    :hkd => 1,
+    :jpy => 1,
+    :try => 1
   }
 
 
@@ -465,12 +480,13 @@ module RuPropisju
   # ==== Опции
   # * +:always_show_fraction+ - true/false. позволяет принудительно отображать 0 в качестве дробной части для целого числа
   # * +:fraction_formatter+ - строка. формат отображения числа после точки, например '%d'
+  # Метод оставлен для обратной совместимости
   def rublej(amount, locale = :ru, options = {})
     integrals_key = :rub_integral
     fractions_key = :rub_fraction
     money_gender = MONEY_GENDERS[:rub]
 
-    money(amount, locale, integrals_key, fractions_key, money_gender, true, false, options)
+    money(amount, locale, integrals_key, fractions_key, money_gender, FRACTION_GENDERS[:rub], {fraction_as_number: true}.merge(options))
   end
 
   # Выводит целое или дробное число как сумму в расширенном формате
@@ -500,7 +516,8 @@ module RuPropisju
     fractions_key = :rub_fraction
     money_gender = MONEY_GENDERS[:rub]
 
-    money(amount, locale, integrals_key, fractions_key, money_gender, true, true, options)
+    money(amount, locale, integrals_key, fractions_key, money_gender, FRACTION_GENDERS[:rub],
+          (options).merge({integrals_as_number: true, fraction_as_number: true}))
   end
   # Выбирает корректный вариант числительного в зависимости от рода и числа и оформляет сумму прописью
   #
@@ -515,19 +532,21 @@ module RuPropisju
   end
 
   # Выводит целое или дробное число как сумму для валюты прописью
-  #
-  #  dollarov(32) #=> "тридцать два доллара"
+  #  dollarov(32.02) #=>  "тридцать два доллара два цента"
   #
   # ==== Опции
   # * +:always_show_fraction+ - true/false. позволяет принудительно отображать 0 в качестве дробной части для целого числа
+  # * +:integrals_as_number+ - true/false. принудительно отображать целую часть числом
+  # * +:fraction_as_number+ - true/false.  принудительно отображать дробную часть числом
   CURRENCIES.reject { |k, _v| ['rub', 'rur'].include? k }.each do |key, name|
 
     define_method(name) do |amount, locale = :ru, options = {}| # or even |*args|
       integrals_key = "#{key}_integral".to_sym
       fractions_key = "#{key}_fraction".to_sym
       money_gender = MONEY_GENDERS[key.to_sym]
+      fraction_gender = FRACTION_GENDERS[key.to_sym]
 
-      money(amount, locale, integrals_key, fractions_key, money_gender, false, false, options)
+      money(amount, locale, integrals_key, fractions_key, money_gender, fraction_gender, options)
     end
   end
 
@@ -556,23 +575,25 @@ module RuPropisju
     elements.join(" ")
   end
 
-  def money(amount, locale, integrals_key, fractions_key, money_gender, fraction_as_number = false, integrals_as_number = false, options = {})
+  def money(amount, locale, integrals_key, fractions_key, money_gender, fraction_gender, options = {})
 
     options[:integrals_formatter] ||= '%d'
     options[:fraction_formatter] ||= '%d'
     options[:integrals_delimiter] ||= ''
     options[:always_show_fraction] ||= false
+    options[:integrals_as_number] ||= false
+    options[:fraction_as_number] ||= false
 
     locale_data = pick_locale(TRANSLATIONS, locale)
     integrals = locale_data[integrals_key]
     fractions = locale_data[fractions_key]
 
-    return zero(locale_data, integrals, fractions, fraction_as_number, integrals_as_number, options) if amount.zero?
+    return zero(locale_data, integrals, fractions, options) if amount.zero?
 
     parts = []
 
     unless amount.to_i == 0
-      if integrals_as_number
+      if options[:integrals_as_number]
         parts << format_integral(amount.to_i, options) << choose_plural(amount.to_i, integrals)
       else
         parts << propisju_int(amount.to_i, money_gender, integrals, locale)
@@ -583,19 +604,19 @@ module RuPropisju
       remainder = (amount.divmod(1)[1]*100).round
       if remainder == 100
         parts = [propisju_int(amount.to_i + 1, money_gender, integrals, locale)]
-        parts << zero_fraction(locale, money_gender, fractions, fraction_as_number, options) if options[:always_show_fraction]
+        parts << zero_fraction(locale, money_gender, fractions, options) if options[:always_show_fraction]
       else
-        if fraction_as_number
+        if options[:fraction_as_number]
           kop = remainder.to_i
           if (!kop.zero? || options[:always_show_fraction])
             parts << format(options[:fraction_formatter], kop) << choose_plural(kop, fractions)
           end
         else
-          parts << propisju_int(remainder.to_i, money_gender, fractions, locale)
+          parts << propisju_int(remainder.to_i, fraction_gender, fractions, locale)
         end
       end
     else
-      parts << zero_fraction(locale, money_gender, fractions, fraction_as_number, options) if options[:always_show_fraction]
+      parts << zero_fraction(locale, money_gender, fractions, options) if options[:always_show_fraction]
     end
 
     parts.join(' ')
@@ -603,15 +624,15 @@ module RuPropisju
 
   private
 
-  def zero(locale_data, integrals, fractions, fraction_as_number, integrals_as_number, options)
-    integ = integrals_as_number ? format(options[:integrals_formatter], 0) : locale_data['0']
-    frac = fraction_as_number ? format(options[:fraction_formatter], 0) : locale_data['0']
+  def zero(locale_data, integrals, fractions, options)
+    integ = options[:integrals_as_number] ? format(options[:integrals_formatter], 0) : locale_data['0']
+    frac = options[:fraction_as_number] ? format(options[:fraction_formatter], 0) : locale_data['0']
     parts = [integ , integrals[-1], frac, fractions[-1]]
     parts.join(' ')
   end
 
-  def zero_fraction(locale, money_gender, fractions, fraction_as_number, options)
-    if fraction_as_number
+  def zero_fraction(locale, money_gender, fractions, options)
+    if options[:fraction_as_number]
       [format(options[:fraction_formatter], 0), choose_plural(0, fractions)]
     else
       propisju_int(0, money_gender, fractions, locale)

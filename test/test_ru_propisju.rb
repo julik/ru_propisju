@@ -769,16 +769,16 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "три гонконгського долара чотирнадцять центів", RuPropisju.hk_dollarov(3.14, :ua)
   end
 
-  def test_hk_yen
+  def test_yen
     assert_equal "сто двадцать три иены", RuPropisju.yen(123)
     assert_equal "сто двадцать четыре иены", RuPropisju.yen(124)
-    assert_equal "триста сорок три иены двадцать сен", RuPropisju.yen(343.20)
-    assert_equal "сорок две сены", RuPropisju.yen(0.4187)
+    assert_equal "триста сорок три иены двадцать сенов", RuPropisju.yen(343.20)
+    assert_equal "сорок два сена", RuPropisju.yen(0.4187)
     assert_equal "триста тридцать две иены", RuPropisju.yen(331.995)
-    assert_equal "триста тридцать одна иена девяносто девять сен", RuPropisju.yen(331.985)
+    assert_equal "триста тридцать одна иена девяносто девять сенов", RuPropisju.yen(331.985)
     assert_equal "одна иена", RuPropisju.yen(1)
-    assert_equal "три иены четырнадцать сен", RuPropisju.yen(3.14)
-    assert_equal "ноль иен ноль сен", RuPropisju.yen(0)
+    assert_equal "три иены четырнадцать сенов", RuPropisju.yen(3.14)
+    assert_equal "ноль иен ноль сенов", RuPropisju.yen(0)
 
     # ru locale предложный падеж
     assert_equal "ста двадцати трёх иен", RuPropisju.yen(123, :ru_in)
@@ -794,13 +794,13 @@ class TestRuPropisju < Test::Unit::TestCase
     # ru locale родительный падеж
     assert_equal 'ста двадцати трёх иен',                            RuPropisju.yen(123, :ru_gen)
     assert_equal 'ста двадцати четырёх иен',                         RuPropisju.yen(124, :ru_gen)
-    assert_equal 'трёхсот сорока трёх иен двадцати сен',             RuPropisju.yen(343.20, :ru_gen)
-    assert_equal 'сорока двух сен',                                  RuPropisju.yen(0.4187, :ru_gen)
+    assert_equal 'трёхсот сорока трёх иен двадцати сенов',             RuPropisju.yen(343.20, :ru_gen)
+    assert_equal 'сорока двух сенов',                                  RuPropisju.yen(0.4187, :ru_gen)
     assert_equal 'трёхсот тридцати двух иен',                        RuPropisju.yen(331.995, :ru_gen)
-    assert_equal 'трёхсот тридцати одной иены девяноста девяти сен', RuPropisju.yen(331.985, :ru_gen)
+    assert_equal 'трёхсот тридцати одной иены девяноста девяти сенов', RuPropisju.yen(331.985, :ru_gen)
     assert_equal 'одной иены',                                       RuPropisju.yen(1, :ru_gen)
-    assert_equal 'трёх иен четырнадцати сен',                        RuPropisju.yen(3.14, :ru_gen)
-    assert_equal 'нуля иен нуля сен',                                RuPropisju.yen(0, :ru_gen)
+    assert_equal 'трёх иен четырнадцати сенов',                        RuPropisju.yen(3.14, :ru_gen)
+    assert_equal 'нуля иен нуля сенов',                                RuPropisju.yen(0, :ru_gen)
 
     # ru locale творительный падеж
     assert_equal "ста двадцатью тремя иенами", RuPropisju.yen(123, :ru_from)
@@ -815,45 +815,45 @@ class TestRuPropisju < Test::Unit::TestCase
 
     # ua locale
     assert_equal "сто двадцять три ієни", RuPropisju.yen(123, :ua)
-    assert_equal "триста сорок три ієни двадцять сен", RuPropisju.yen(343.20, :ua)
-    assert_equal "сорок дві сіна", RuPropisju.yen(0.4187, :ua)
+    assert_equal "триста сорок три ієни двадцять сінів", RuPropisju.yen(343.20, :ua)
+    assert_equal "сорок два сіна", RuPropisju.yen(0.4187, :ua)
     assert_equal "триста тридцять дві ієни", RuPropisju.yen(331.995, :ua)
     assert_equal "одна ієна", RuPropisju.yen(1, :ua)
-    assert_equal "три ієни чотирнадцять сен", RuPropisju.yen(3.14, :ua)
+    assert_equal "три ієни чотирнадцять сінів", RuPropisju.yen(3.14, :ua)
   end
 
-  def test_hk_lir
+  def test_lir
     assert_equal "сто двадцать три турецкие лиры", RuPropisju.lir(123)
     assert_equal "сто двадцать четыре турецкие лиры", RuPropisju.lir(124)
-    assert_equal "триста сорок три турецкие лиры двадцать куруш", RuPropisju.lir(343.20)
-    assert_equal "сорок две куруш", RuPropisju.lir(0.4187)
+    assert_equal "триста сорок три турецкие лиры двадцать курушей", RuPropisju.lir(343.20)
+    assert_equal "сорок два куруша", RuPropisju.lir(0.4187)
     assert_equal "триста тридцать две турецкие лиры", RuPropisju.lir(331.995)
-    assert_equal "триста тридцать одна турецкая лира девяносто девять куруш", RuPropisju.lir(331.985)
+    assert_equal "триста тридцать одна турецкая лира девяносто девять курушей", RuPropisju.lir(331.985)
     assert_equal "одна турецкая лира", RuPropisju.lir(1)
-    assert_equal "три турецкие лиры четырнадцать куруш", RuPropisju.lir(3.14)
-    assert_equal "ноль турецких лир ноль куруш", RuPropisju.lir(0)
+    assert_equal "три турецкие лиры четырнадцать курушей", RuPropisju.lir(3.14)
+    assert_equal "ноль турецких лир ноль курушей", RuPropisju.lir(0)
 
     # ru locale предложный падеж
     assert_equal "ста двадцати трёх турецких лир", RuPropisju.lir(123, :ru_in)
     assert_equal "ста двадцати четырёх турецких лир", RuPropisju.lir(124, :ru_in)
-    assert_equal "трёхстах сорока трёх турецких лир двадцати куруш", RuPropisju.lir(343.20, :ru_in)
-    assert_equal "сорока двух куруш", RuPropisju.lir(0.4187, :ru_in)
+    assert_equal "трёхстах сорока трёх турецких лир двадцати курушах", RuPropisju.lir(343.20, :ru_in)
+    assert_equal "сорока двух курушах", RuPropisju.lir(0.4187, :ru_in)
     assert_equal "трёхстах тридцати двух турецких лир", RuPropisju.lir(331.995, :ru_in)
-    assert_equal "трёхстах тридцати одной турецкой лире девяноста девяти куруш", RuPropisju.lir(331.985, :ru_in)
+    assert_equal "трёхстах тридцати одной турецкой лире девяноста девяти курушах", RuPropisju.lir(331.985, :ru_in)
     assert_equal "одной турецкой лире", RuPropisju.lir(1, :ru_in)
-    assert_equal "трёх турецких лир четырнадцати куруш", RuPropisju.lir(3.14, :ru_in)
-    assert_equal "нуле турецких лирах нуле куруш", RuPropisju.lir(0, :ru_in)
+    assert_equal "трёх турецких лир четырнадцати курушах", RuPropisju.lir(3.14, :ru_in)
+    assert_equal "нуле турецких лирах нуле курушах", RuPropisju.lir(0, :ru_in)
 
     # ru locale родительный падеж
     assert_equal 'ста двадцати трёх турецких лир',                              RuPropisju.lir(123, :ru_gen)
     assert_equal 'ста двадцати четырёх турецких лир',                           RuPropisju.lir(124, :ru_gen)
-    assert_equal 'трёхсот сорока трёх турецких лир двадцати куруш',             RuPropisju.lir(343.20, :ru_gen)
-    assert_equal 'сорока двух куруш',                                           RuPropisju.lir(0.4187, :ru_gen)
+    assert_equal 'трёхсот сорока трёх турецких лир двадцати курушей',             RuPropisju.lir(343.20, :ru_gen)
+    assert_equal 'сорока двух курушей',                                           RuPropisju.lir(0.4187, :ru_gen)
     assert_equal 'трёхсот тридцати двух турецких лир',                          RuPropisju.lir(331.995, :ru_gen)
-    assert_equal 'трёхсот тридцати одной турецкой лиры девяноста девяти куруш', RuPropisju.lir(331.985, :ru_gen)
+    assert_equal 'трёхсот тридцати одной турецкой лиры девяноста девяти курушей', RuPropisju.lir(331.985, :ru_gen)
     assert_equal 'одной турецкой лиры',                                         RuPropisju.lir(1, :ru_gen)
-    assert_equal 'трёх турецких лир четырнадцати куруш',                        RuPropisju.lir(3.14, :ru_gen)
-    assert_equal 'нуля турецких лир нуля куруш',                                RuPropisju.lir(0, :ru_gen)
+    assert_equal 'трёх турецких лир четырнадцати курушей',                        RuPropisju.lir(3.14, :ru_gen)
+    assert_equal 'нуля турецких лир нуля курушей',                                RuPropisju.lir(0, :ru_gen)
 
     # ru locale творительный падеж
     assert_equal "ста двадцатью тремя турецкими лирами", RuPropisju.lir(123, :ru_from)
@@ -869,7 +869,7 @@ class TestRuPropisju < Test::Unit::TestCase
     # ua locale
     assert_equal "сто двадцять три турецькі ліри", RuPropisju.lir(123, :ua)
     assert_equal "триста сорок три турецькі ліри двадцять куруш", RuPropisju.lir(343.20, :ua)
-    assert_equal "сорок дві куруша", RuPropisju.lir(0.4187, :ua)
+    assert_equal "сорок два куруша", RuPropisju.lir(0.4187, :ua)
     assert_equal "триста тридцять дві турецькі ліри", RuPropisju.lir(331.995, :ua)
     assert_equal "одна турецька ліра", RuPropisju.lir(1, :ua)
     assert_equal "три турецькі ліри чотирнадцять куруш", RuPropisju.lir(3.14, :ua)
@@ -954,5 +954,21 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "триста сорок пять долларов два цента", RuPropisju.dollarov(345.02, :ru, options_custom_formatter)
     assert_equal "три доллара ноль центов", RuPropisju.dollarov(3, :ru, options_custom_formatter)
     assert_equal "три евро ноль центов", RuPropisju.evro(3, :ru, options_custom_formatter)
+
+    options = { integrals_as_number: true, fraction_as_number: true }
+    assert_equal "343 рубля 20 копеек", RuPropisju.rublej(343.20, :ru, options)
+    assert_equal "4 рубля 60 копеек", RuPropisju.digit_rublej(4.60, :ru, options)
+
+    options = { integrals_as_number: false, fraction_as_number: true }
+    assert_equal "триста сорок три рубля 20 копеек", RuPropisju.rublej(343.20, :ru, options)
+    assert_equal "4 рубля 60 копеек", RuPropisju.digit_rublej(4.60, :ru, options)
+
+    options = { integrals_as_number: true , fraction_as_number: false }
+    assert_equal "343 рубля двадцать копеек", RuPropisju.rublej(343.20, :ru, options)
+    assert_equal "4 рубля 60 копеек", RuPropisju.digit_rublej(4.60, :ru, options)
+
+    options = { integrals_as_number: false, fraction_as_number: false }
+    assert_equal "триста сорок три рубля двадцать копеек", RuPropisju.rublej(343.20, :ru, options)
+    assert_equal "4 рубля 60 копеек", RuPropisju.digit_rublej(4.60, :ru, options)
   end
 end
