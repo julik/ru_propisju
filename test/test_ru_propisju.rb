@@ -819,7 +819,7 @@ class TestRuPropisju < Test::Unit::TestCase
     assert_equal "сорок два сіна", RuPropisju.yen(0.4187, :ua)
     assert_equal "триста тридцять дві ієни", RuPropisju.yen(331.995, :ua)
     assert_equal "одна ієна", RuPropisju.yen(1, :ua)
-    assert_equal "три ієни чотирнадцять сінів", RuPropisju.yen(3.14, :ua)
+    assert_equal "три єни чотирнадцять сенів", RuPropisju.yen(3.14, :ua)
   end
 
   def test_lir
