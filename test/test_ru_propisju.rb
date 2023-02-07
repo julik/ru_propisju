@@ -868,7 +868,7 @@ class TestRuPropisju < Test::Unit::TestCase
 
     # ua locale
     assert_equal "сто двадцять три турецькі ліри", RuPropisju.lir(123, :ua)
-    assert_equal "триста сорок три турецькі ліри двадцять куруш", RuPropisju.lir(343.20, :ua)
+    assert_equal "триста сорок три турецькі ліри двадцять курушів", RuPropisju.lir(343.20, :ua)
     assert_equal "сорок два куруши", RuPropisju.lir(0.4187, :ua)
     assert_equal "триста тридцять дві турецькі ліри", RuPropisju.lir(331.995, :ua)
     assert_equal "одна турецька ліра", RuPropisju.lir(1, :ua)
